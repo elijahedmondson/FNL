@@ -1,4 +1,4 @@
-data <- read_excel("MHL 19-331-114 Efficacy.xlsx", sheet = "Path Data")
+#data <- read_excel("MHL 19-331-114 Efficacy.xlsx", sheet = "Path Data")
 setwd("F:/QuPath/Scripts/FNL-R-scripts-master")
 
 library(ggplot2)
@@ -8,6 +8,28 @@ library(ggpubr)
 library(Rmisc)
 library(tidyverse)
 library(plyr)
+library(GGally)
+library(ggplot2)
+library(tidyverse)
+library(gapminder)
+
+theme_set(theme_bw(12))
+variable = data$`Sum on Marrow Grade`
+
+plot<-data %>%
+  ggplot(aes(Group,variable)) +
+  geom_jitter(aes(color = `Time on Test`), width = 0.2, height = 0.001, size = 3) +
+  scale_y_continuous(name = "Bone Marrow: Leukemia Grade") + 
+  theme(axis.text.x=element_text(angle=25,hjust=1)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20))
+plot
+
+
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("Plot.tiff", units="in", width=12, height=6, res=150)
+plot
+dev.off()
+
 
 my_mean = aggregate(data$'Rectum ICC-CM Cells per unit area', by=list(data$'Group'), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
 my_CI = aggregate(data$'Rectum ICC-CM Cells per unit area', by=list(data$'Group'), FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")

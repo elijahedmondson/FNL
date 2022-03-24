@@ -19,14 +19,37 @@ library(ggfortify)
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
 
-fit <- survfit(Surv(Days)~Group, data=data)
+fit <- survfit(Surv(TimeOnTest, Censor)~Groups, data=data)
+all <- ggsurvplot(fit, data=data, pval = TRUE, risk.table = F, surv.median.line = c("hv"), 
+           legend="right",legend.title="Groups",legend.labs=c("F01 Control",
+                                                              "F02 Gilteritinib",
+                                                              "F03 NCGC00689526",
+                                                              "F04 NCGC00690380",
+                                                              "F05 NCGC00841450",
+                                                              "F06 NCGC00689529"))
 
-jskm(fit)
-jskm(fit, ci = F, cumhaz = F, legendposition = c(0.2,0.2),  mark = F, table = T, ylab = "Cumulative incidence (%)", surv.scale = "percent")#, pval =T, pval.size = 6, pval.coord = c(300, 0.7))
-
-tiff("JBM336.tiff", units="in", width=10, height=5, res=300)
-jskm(fit, ci = F, cumhaz = F, legendposition = c(0.2,0.2),  mark = F, ylab = "Cumulative incidence (%)", surv.scale = "percent")
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("19-331-121 Survival Curves.tiff", units="in", width=10, height=5, res=200)
+all
 dev.off()
+
+
+F01 <- dplyr::filter(data, Groups!="F01 - Control")
+fit <- survfit(Surv(TimeOnTest, Censor)~Groups, data=F01)
+SOC <- ggsurvplot(fit, data=F01, pval = TRUE, risk.table = F, surv.median.line = c("hv"), 
+                  legend="right",legend.title="Groups",legend.labs=c("F02 Gilteritinib",
+                                                                     "F03 NCGC00689526",
+                                                                     "F04 NCGC00690380",
+                                                                     "F05 NCGC00841450",
+                                                                     "F06 NCGC00689529"))
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("19-331-121 Survival Curves SOC.tiff", units="in", width=10, height=5, res=200)
+SOC
+dev.off()
+
+
+coxfit <- coxph(Surv(TimeOnTest, Censor) ~ Groups, data = F01, ties = 'exact')
+summary(coxfit)
 
 
 ####### OPTION 2 ####### 
