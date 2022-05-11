@@ -617,17 +617,28 @@ for(i in 1:length(Annotationfiles)){
 }
 write.csv(Measurements, outFile, row.names=T)
 
+ggplot(data, aes(x = `family`, y = `Cataract`))+
+  geom_col(aes(fill = `Cataract`), width = 0.7)
 
 
 
 
+ggplot(data, aes(fill=`Cataract`, x=`family`, y="")) +
+  geom_bar(position="stack", stat="identity")
 
+  geom_histogram(fill="white", binwidth = 1)+
+  theme_classic() +
+  geom_text(aes(label=..count..),stat="count",position=position_stack())
 
+ggplot(data, aes(x=`family`, color=data$`Cataract`)) +
+  geom_histogram(fill="white", binwidth = 1)+
+  theme_classic() +
+  geom_text(aes(label=..count..),stat="count",position=position_stack())
 
-
-
-
-
+ggplot(data, aes(x="", y=groups, fill=family)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() 
 
 
 

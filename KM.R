@@ -18,8 +18,21 @@ library(ggfortify)
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
+data <- read_excel("C:/Users/edmondsonef/Desktop/MOLM14 NSG-SGM3 model.xlsx", 
+                   sheet = "veh")
 
-fit <- survfit(Surv(TimeOnTest, Censor)~Groups, data=data)
+
+fit <- survfit(Surv(`Days post implant`)~Group, data=data)
+ggsurvplot(fit, data=data)
+surv_median(fit)
+ggsurvplot(fit, data=data, pval = F, risk.table = T)
+
+ggsurvplot(fit, data=data, pval = T, risk.table = F, conf.int = F, surv.median.line = c("hv"),
+           title = "Days post implant: NSG-SGM3, Vehicle", 
+                  legend="right",legend.title="Groups",legend.labs=c("19-331-114 Vehicle",
+                                                                     "19-331-121 Vehicle",
+                                                                     "19-331-098 Vehicle"))
+
 all <- ggsurvplot(fit, data=data, pval = TRUE, risk.table = F, surv.median.line = c("hv"), 
            legend="right",legend.title="Groups",legend.labs=c("F01 Control",
                                                               "F02 Gilteritinib",
@@ -29,7 +42,7 @@ all <- ggsurvplot(fit, data=data, pval = TRUE, risk.table = F, surv.median.line 
                                                               "F06 NCGC00689529"))
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("19-331-121 Survival Curves.tiff", units="in", width=10, height=5, res=200)
+tiff("19-331-121 Survival Curves.tiff", units="in", width=5, height=3, res=200)
 all
 dev.off()
 
