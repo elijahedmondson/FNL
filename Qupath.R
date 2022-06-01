@@ -14,12 +14,12 @@ library(tidyverse)
 library(gapminder)
 
 theme_set(theme_bw(12))
-variable = data$`Sum on Marrow Grade`
+variable = data$`Aspirate Grade`
 
 plot<-data %>%
   ggplot(aes(Group,variable)) +
-  geom_jitter(aes(color = `Time on Test`), width = 0.2, height = 0.001, size = 3) +
-  scale_y_continuous(name = "Bone Marrow: Leukemia Grade") + 
+  geom_jitter(aes(color = `Group`), width = 0.2, height = 0.001, size = 3) +
+  scale_y_continuous(name = "Bone Marrow Aspirate Grade") + 
   theme(axis.text.x=element_text(angle=25,hjust=1)) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20))
 plot
@@ -31,16 +31,18 @@ plot
 dev.off()
 
 
-my_mean = aggregate(data$'Rectum ICC-CM Cells per unit area', by=list(data$'Group'), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
-my_CI = aggregate(data$'Rectum ICC-CM Cells per unit area', by=list(data$'Group'), FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")
+my_mean = aggregate(data$`Aspirate Grade`, by=list(data$'Group'), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
+my_CI = aggregate(data$`Aspirate Grade`, by=list(data$'Group'), FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")
 my_info = merge(my_mean, my_CI, by.x=1 , by.y=1)
 my_info$CIdiff = ((my_CI$CI[,2] - my_CI$CI[,1])/2)
+my_info=merge(my_mean, my_sd, by.x=1 , by.y=1)
+my_info$se <- my_info$sd / sqrt(cdata$N)
 
 Image3 <- ggplot(data) + 
   geom_point(data = my_info, aes(x = my_info$'Group', y = my_info$mean), color = "grey", size = 5) +
-  scale_y_continuous(name = "Rectum: ICC-CM per mm") +
+  scale_y_continuous(name = "Bone Marrow Aspirate Grade") +
   geom_errorbar(data = my_info, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.2 , size=1) +
-  geom_jitter(aes(x = data$'Group', y = data$'Rectum ICC-CM Cells per unit area', color = data$'Sex'), width = 0.2, height = 0.00001, size = 2) +
+  geom_jitter(aes(x = data$'Group', y = data$`Aspirate Grade`, color = data$'Groups'), width = 0.2, height = 0.01, size = 2) +
   theme_bw(base_size = 18) +
   #theme(axis.text.x=element_text(angle=25,hjust=1))+
   theme(axis.title.x=element_blank(), text = element_text(size = 20))+
@@ -65,19 +67,19 @@ PMBC <- data[ which(data$Cells=='hPBMC'), ]
 ############SD funs(mean, sem=sd(.)/sqrt(length(.)))
 ############SD
 ############SD
-my_mean=aggregate(data$'Sum on Marrow Grade', by=list(data$Group), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
-my_sd=aggregate(data$'Sum on Marrow Grade', by=list(data$Group), sd, na.rm=TRUE) ; colnames(my_sd)=c("Group" , "sd")
+my_mean=aggregate(data$'Aspirate Grade', by=list(data$Group), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
+my_sd=aggregate(data$'Aspirate Grade', by=list(data$Group), sd, na.rm=TRUE) ; colnames(my_sd)=c("Group" , "sd")
 my_info=merge(my_mean, my_sd, by.x=1 , by.y=1)
 my_info$se <- my_info$sd / sqrt(cdata$N)
 
 ggplot(data) + 
-  geom_point(data = my_info, aes(x = Group , y = my_info$mean), color = "grey", size = 5) +
-  scale_y_continuous(name = "Bone Marrow Histopathology: Grade") + #, limits = c(15, 50)) +
-  geom_errorbar(data = my_info, aes(x = Group, y = sd, ymin = mean - sd, ymax = mean + sd), color = "grey", width = 0.2 , size=2) +
+  geom_point(data = my_info, aes(x = Group , y = my_info$mean), color = "grey", size = 4) +
+  scale_y_continuous(name = "Bone Marrow Aspirate Grade") + #, limits = c(15, 50)) +
+  geom_errorbar(data = my_info, aes(x = Group, y = sd, ymin = mean - sd, ymax = mean + sd), color = "grey", width = 0.2 , size=1) +
   theme_bw(base_size = 18) +
-  geom_jitter(aes(x = data$Group, y = data$'Sum on Marrow Grade', color = data$Group), width = 0.2, size = 4) +
+  geom_jitter(aes(x = data$Group, y = data$'Aspirate Grade', color = data$Groups),height = 0.051, width = 0.1, size = 3) +
   theme(axis.text.x=element_text(angle=25,hjust=1)) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 20), legend.position="none")
+  theme(axis.title.x=element_blank(), text = element_text(size = 20))#, legend.position="none")
 
 ############SEM
 ############SEM
