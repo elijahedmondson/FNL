@@ -22,7 +22,7 @@ data <- read_excel("C:/Users/edmondsonef/Desktop/MOLM14 NSG-SGM3 model.xlsx",
                    sheet = "veh")
 
 
-fit <- survfit(Surv(`Days post implant`)~Group, data=data)
+fit <- survfit(Surv(`Day`, censor)~Group, data=data)
 ggsurvplot(fit, data=data)
 surv_median(fit)
 ggsurvplot(fit, data=data, pval = F, risk.table = T)
@@ -33,16 +33,17 @@ ggsurvplot(fit, data=data, pval = T, risk.table = F, conf.int = F, surv.median.l
                                                                      "19-331-121 Vehicle",
                                                                      "19-331-098 Vehicle"))
 
-all <- ggsurvplot(fit, data=data, pval = TRUE, risk.table = F, surv.median.line = c("hv"), 
+all <- ggsurvplot(fit, data=data, pval = TRUE, risk.table = T,# surv.median.line = c("hv"), 
            legend="right",legend.title="Groups",legend.labs=c("F01 Control",
                                                               "F02 Gilteritinib",
-                                                              "F03 NCGC00689526",
-                                                              "F04 NCGC00690380",
-                                                              "F05 NCGC00841450",
-                                                              "F06 NCGC00689529"))
+                                                              "F03 NCGC00841450",
+                                                              "F04 NCGC00690381",
+                                                              "F05 NCGC00841754",
+                                                              "F06 NCGC00843798",
+                                                              "F07 CA-4948 (NCGC00687840)"))
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("19-331-121 Survival Curves.tiff", units="in", width=5, height=3, res=200)
+tiff("19-331-137 Survival Curves.tiff", units="in", width=15, height=9, res=200)
 all
 dev.off()
 
