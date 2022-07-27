@@ -1,5 +1,3 @@
-#data <- read_excel("MHL 19-331-114 Efficacy.xlsx", sheet = "Path Data")
-setwd("F:/QuPath/Scripts/FNL-R-scripts-master")
 
 library(ggplot2)
 library(gridExtra)
@@ -14,12 +12,12 @@ library(tidyverse)
 library(gapminder)
 
 theme_set(theme_bw(12))
-variable = data$`Aspirate Grade`
+variable = data$`H-score`
 
 plot<-data %>%
-  ggplot(aes(Group,variable)) +
+  ggplot(aes(`Cell Type`,variable)) +
   geom_jitter(aes(color = `Group`), width = 0.2, height = 0.001, size = 3) +
-  scale_y_continuous(name = "Bone Marrow Aspirate Grade") + 
+  scale_y_continuous(name = "Nat10 H-score") + 
   theme(axis.text.x=element_text(angle=25,hjust=1)) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20))
 plot
