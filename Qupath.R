@@ -1,5 +1,6 @@
 
-library(ggplot2)
+
+
 library(gridExtra)
 library(readxl)
 library(ggpubr)
@@ -10,15 +11,16 @@ library(GGally)
 library(ggplot2)
 library(tidyverse)
 library(gapminder)
+library(dplyr)
 
 theme_set(theme_bw(12))
-variable = data$`H-score`
+variable = data$`calc`
 
 plot<-data %>%
-  ggplot(aes(`Cell Type`,variable)) +
+  ggplot(aes(`Groups`,variable)) +
   geom_jitter(aes(color = `Group`), width = 0.2, height = 0.001, size = 3) +
-  scale_y_continuous(name = "Nat10 H-score") + 
-  theme(axis.text.x=element_text(angle=25,hjust=1)) +
+  scale_y_continuous(name = "Age-adjusted leukemia burden (BM score / time on test)") + 
+  #theme(axis.text.x=element_text(angle=25,hjust=1)) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20))
 plot
 
@@ -29,26 +31,32 @@ plot
 dev.off()
 
 
-my_mean = aggregate(data$`Aspirate Grade`, by=list(data$'Group'), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
-my_CI = aggregate(data$`Aspirate Grade`, by=list(data$'Group'), FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+variable = data$`Sum on Marrow Grade`
+group = data$`Groups`
+my_mean = aggregate(variable, by=list(group), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
+my_CI = aggregate(variable, by=list(group), FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")
 my_info = merge(my_mean, my_CI, by.x=1 , by.y=1)
 my_info$CIdiff = ((my_CI$CI[,2] - my_CI$CI[,1])/2)
 my_info=merge(my_mean, my_sd, by.x=1 , by.y=1)
 my_info$se <- my_info$sd / sqrt(cdata$N)
 
-Image3 <- ggplot(data) + 
-  geom_point(data = my_info, aes(x = my_info$'Group', y = my_info$mean), color = "grey", size = 5) +
-  scale_y_continuous(name = "Bone Marrow Aspirate Grade") +
-  geom_errorbar(data = my_info, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.2 , size=1) +
-  geom_jitter(aes(x = data$'Group', y = data$`Aspirate Grade`, color = data$'Groups'), width = 0.2, height = 0.01, size = 2) +
+plot <- ggplot(data) + 
+  geom_jitter(aes(x = group, y = variable, color = data$'Group'), width = 0.2, height = 0.01, size = 4) +
+  geom_point(data = my_info, aes(x = my_info$'Group', y = my_info$mean), color = "grey", size = 4) +
+  scale_y_continuous(name = "Bone Marrow \nLeukemia Grade") +
+  geom_errorbar(data = my_info, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.4 , size=1) +
   theme_bw(base_size = 18) +
   #theme(axis.text.x=element_text(angle=25,hjust=1))+
-  theme(axis.title.x=element_blank(), text = element_text(size = 20))+
-  theme(axis.title.x=element_blank(), legend.position="none")
-Image3
+  theme(axis.title.x=element_blank(), text = element_text(size = 18), legend.title=element_blank())
+  #theme(axis.title.x=element_blank(), legend.position="none")
+plot
 
-tiff("CD117.tiff", units="in", width=20, height=6, res=300)
-grid.arrange(Image1, Image2, Image3, ncol = 3, nrow = 1)
+
+
+tiff("plot.tiff", units="in", width=10, height=6, res=300)
+#grid.arrange(Image1, Image2, Image3, ncol = 3, nrow = 1)
+plot
 dev.off()
 
 
