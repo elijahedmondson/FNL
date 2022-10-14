@@ -356,10 +356,10 @@ ggplot(data) +
 ###Scatterplots, tumor size over time, etc###
 
 
-ggplot(data, aes(x = data$'rankZ', y = data$'log_days')) +
+ggplot(data, aes(x = data$'PD-L1 H-score', y = data$'CD45 cells per mm^2...21')) +
   geom_point(aes(color = data$Group), size = 5)+
-  scale_y_continuous(name = "log_days") +
-  scale_x_continuous(name = "rankZ") +
+  scale_y_continuous(name = "CD45 cells per mm^2") +
+  scale_x_continuous(name = "PD-L1 H-score") +
   theme_bw(base_size = 18)+
   stat_smooth(method = "lm",
               col = "#C42126",
@@ -437,14 +437,14 @@ library(Rmisc)
 
 
 my.formula <- y ~ x
-ggplot(data = data, aes(x = data$'rankZ', y = data$'PreT LL', color = data$'PreT LL'), na.rm=TRUE) +
+ggplot(data = data, aes(x = data$'PD-L1 H-score', y = data$'CD45 cells per mm^2...21', color = data$'Group'), na.rm=TRUE) +
   geom_smooth(method = "lm", se=FALSE, color="red", formula = my.formula, na.rm=TRUE) +
   stat_poly_eq(formula = my.formula, 
                aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
                parse = TRUE, na.rm=TRUE) +  
   geom_point(na.rm=TRUE)+
-  scale_y_continuous(name = "PreT LL") +
-  scale_x_continuous(name = "rankZ") + #, limits = c(20, 36)) +
+  scale_y_continuous(name = "CD45 cells per mm^2") +
+  scale_x_continuous(name = "PD-L1 H-score") + #, limits = c(20, 36)) +
     theme_bw(base_size = 16)      
 
 pswab1 <- ggplot(data = data1, aes(x = data1$'Urine.log', y = data1$'Swab.log'), na.rm=TRUE) +
