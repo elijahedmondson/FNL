@@ -356,10 +356,10 @@ ggplot(data) +
 ###Scatterplots, tumor size over time, etc###
 
 
-ggplot(data, aes(x = data$'PD-L1 H-score', y = data$'CD45 cells per mm^2...21')) +
+ggplot(data, aes(x = data$'SUM1', y = data$'SUM2')) +
   geom_point(aes(color = data$Group), size = 5)+
-  scale_y_continuous(name = "CD45 cells per mm^2") +
-  scale_x_continuous(name = "PD-L1 H-score") +
+  scale_y_continuous(name = "SUM2") +
+  scale_x_continuous(name = "SUM1") +
   theme_bw(base_size = 18)+
   stat_smooth(method = "lm",
               col = "#C42126",
