@@ -631,14 +631,14 @@ ggplot(data, aes(x = `family`, y = `Cataract`))+
 
 
 
-ggplot(data, aes(fill=`Cataract`, x=`family`, y="")) +
+ggplot(data, aes(fill=`cat_score`, x=`family`, y="")) +
   geom_bar(position="stack", stat="identity")
 
   geom_histogram(fill="white", binwidth = 1)+
   theme_classic() +
   geom_text(aes(label=..count..),stat="count",position=position_stack())
 
-ggplot(data, aes(x=`family`, color=data$`Cataract`)) +
+ggplot(data, aes(x=`family`, color=data$`cat_score`)) +
   geom_histogram(fill="white", binwidth = 1)+
   theme_classic() +
   geom_text(aes(label=..count..),stat="count",position=position_stack())
