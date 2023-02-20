@@ -1,6 +1,3 @@
-
-
-
 library(gridExtra)
 library(readxl)
 library(ggpubr)
@@ -12,6 +9,10 @@ library(ggplot2)
 library(tidyverse)
 library(gapminder)
 library(dplyr)
+library(ggsignif)
+# new <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(sum = sum(`Area (microns squared)`))
+# write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
+
 
 theme_set(theme_bw(12))
 variable = data$`H-score`
@@ -32,8 +33,25 @@ plot
 dev.off()
 
 
+
+
+
+
+
+
+
+Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+                     sheet = "19-331-137")
+Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+                     sheet = "19-331-121")
+Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+                     sheet = "22-331-2")
+
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-variable = data$`Sum on Marrow Grade`
+
+data <- Study1
+
+variable = data$`Adjusted Marrow Grade`
 group = data$`Groups`
 my_mean = aggregate(variable, by=list(group), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
 my_CI = aggregate(variable, by=list(group), FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")
@@ -45,17 +63,26 @@ my_info$se <- my_info$sd / sqrt(cdata$N)
 plot <- ggplot(data) + 
   geom_jitter(aes(x = group, y = variable, color = data$'Group'), width = 0.2, height = 0.01, size = 4) +
   geom_point(data = my_info, aes(x = my_info$'Group', y = my_info$mean), color = "grey", size = 4) +
-  scale_y_continuous(name = "Bone Marrow \nLeukemia Grade") +
+  scale_y_continuous(name = "Survival Adjusted Leukemic Grade \n(BM Grade / Time on Test)") +
   geom_errorbar(data = my_info, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.4 , size=1) +
   theme_bw(base_size = 18) +
-  #theme(axis.text.x=element_text(angle=25,hjust=1))+
-  theme(axis.title.x=element_blank(), text = element_text(size = 18), legend.title=element_blank())
-  #theme(axis.title.x=element_blank(), legend.position="none")
+  theme(axis.title.x=element_blank(), text = element_text(size = 18), legend.title=element_blank())+
+  geom_signif(comparisons = list(c("F01", "F02")), 
+            map_signif_level=TRUE)
 plot
 
+ggplot(data, aes(Groups, `Adjusted Marrow Grade`))+
+  geom_boxplot()+
+  geom_jitter(aes(x = group, y = variable, color = data$'Group'), width = 0.2, height = 0.01, size = 4) +
+  
+  theme_bw(base_size = 18) +
+  geom_signif(
+    comparisons = list(c("F01", "F02"), c("F01", "F03")),
+    map_signif_level = TRUE, textsize = 6
+  )
 
 
-tiff("plot.tiff", units="in", width=10, height=6, res=300)
+tiff("Study1.tiff", units="in", width=12, height=6, res=300)
 #grid.arrange(Image1, Image2, Image3, ncol = 3, nrow = 1)
 plot
 dev.off()
@@ -648,7 +675,6 @@ ggplot(data, aes(x="", y=groups, fill=family)) +
   geom_bar(stat="identity", width=1, color="white") +
   coord_polar("y", start=0) +
   theme_void() 
-
 
 
 

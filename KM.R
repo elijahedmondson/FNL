@@ -1,8 +1,3 @@
-data <- read_excel("C:/Users/edmondsonef/Desktop/JBM 336 Data.xlsx", 
-                   sheet = "Full Data")
-
-
-
 library(survMisc)
 library(survival)
 library(jskm)
@@ -11,12 +6,20 @@ library(survminer)
 library(survival)
 library(ggplot2)
 library(ggfortify)
-
+library(readxl)
 library(survival)
 library(survminer)
 library(flexsurv)
 library(dplyr)
 library(survtools)
+library(finalfit)
+
+Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+                     sheet = "19-331-137")
+Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+                     sheet = "19-331-121")
+Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+                     sheet = "22-331-2")
 
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
@@ -29,40 +32,7 @@ library(survtools)
 ####### OPTION 1 ####### 
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-####
-#### JBM Studies
-####
 
-#format data only with columsn for sum
-DF <- data %>% group_by(Group) %>%
-  replace(is.na(.), 0) %>%
-  summarise_all(funs(sum))
-
-fit <- survfit(Surv(data$'Age', Censor)~Group, data=data)
-surv_median(fit)
-x <- ggsurvplot2(fit, data=data, pval = F, risk.table = F,conf.int = F, surv.median.line = c("hv"), 
-                       legend="right",legend.title="Groups",legend.labs=c("Control",
-                                                                          "Rapamycin",
-                                                                          "3 Gy",
-                                                                          "3 Gy + 14 mg/kg",
-                                                                          "3 Gy + 50 mg/kg"))
-allplot
-
-tiff("KM_all.tiff", units="in", width=7, height=4, res=300)
-allplot
-dev.off()
-
-new <- filter(data, Group %in% c("F03", "F04", "F05")) 
-fit <- survfit(Surv(new$'Age', Censor)~Group, data=new)
-surv_median(fit)
-newplot <- ggsurvplot2(fit, data=new, pval = T, risk.table = F,conf.int = F, surv.median.line = c("hv"), 
-                       legend="right",legend.title="Groups",legend.labs=c("3 Gy",
-                                                                          "3 Gy + 14 mg/kg",
-                                                                          "3 Gy + 50 mg/kg"))
-newplot
-tiff("KM_censor_sub.tiff", units="in", width=7, height=4, res=300)
-newplot
-dev.off()
 
 
 ####
@@ -70,22 +40,58 @@ dev.off()
 ####
 
 
-all <- read_excel("C:/Users/edmondsonef/Desktop/MHL 19-331-137.xlsx", 
-                   sheet = "Animal data")
 
-data <- all
-fit <- survfit(Surv(`Day`, censor)~Group, data=data)
+
+data <- Study1
+fit <- survfit(Surv(`Days`, Censor)~Group, data=data)
 surv_median(fit)
-allplot <- ggsurvplot2(fit, data=data, pval = F, risk.table = F,# surv.median.line = c("hv"), 
-                       legend="right",legend.title="Groups",legend.labs=c("Vehicle",
-                                                                          "Gilteritinib",
-                                                                          "NCGC00841450",
-                                                                          "NCGC00690381",
-                                                                          "NCGC00841754",
-                                                                          "NCGC00843798",
-                                                                          "CA-4948"))
+allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = T)#, #surv.median.line = c("hv")), 
+                       # legend="right", legend.title="Group", legend.labs=c("Vehicle",
+                       #                                                    "30 mg/kg Gilteritinib",
+                       #                                                    "1 mg/kg NCGC00841450",
+                       #                                                    "3 mg/kg NCGC00841450",
+                       #                                                    "10 mg/kg NCGC00841450",
+                       #                                                    "10 mg/kg NCGC00841450 MWF",
+                       #                                                    "30 mg/kg NCGC00841450"))
 allplot
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("22-331-2 Survival Curves.tiff", units="in", width=12, height=10, res=200)
+allplot
+dev.off()
 
+### CoxPH risk estimates
+fit <- survfit(Surv(Days, Censor)~Group, data=data)
+coxfit <- coxph(Surv(Days, Censor) ~ Group, data = data, ties = 'exact')
+summary(coxfit)
+
+
+
+#Final Fit
+explanatory = 'Group'
+dependent = 'Days'
+table_data <- data %>% 
+  finalfit(dependent, explanatory)
+knitr::kable(table_data, align=c("l", "l", "r", "r", "r"))
+
+data %>% 
+  or_plot(dependent, explanatory)
+
+
+
+
+
+
+F01 <- dplyr::filter(all, Group!="F01")
+
+
+F01$Tx <- factor(F01$Tx, levels = c("30 mg/kg Gilteritinib",
+                                          "1 mg/kg NCGC00841450",
+                                          "3 mg/kg NCGC00841450",
+                                          "10 mg/kg NCGC00841450",
+                                          "10 mg/kg NCGC00841450 MWF",
+                                          "30 mg/kg NCGC00841450"))
+coxfit <- coxph(Surv(Days) ~ Tx, data = F01, ties = 'exact')
+summary(coxfit)
 
 
 data <- filter(all, Groups %in% c("F01", "F02", "F04")) 
