@@ -455,62 +455,6 @@ res.cox <- coxph(Surv(data$days, data$event), data = data)
 #############Histogram
 
 
-library(ggplot2)
-library(ggpmisc)
-library(ggplot2)
-library(gridExtra)
-library(readxl)
-library(ggpubr)
-library(Rmisc)
-
-
-my.formula <- y ~ x
-ggplot(data = data, aes(x = data$'PD-L1 H-score', y = data$'CD45 cells per mm^2...21', color = data$'Group'), na.rm=TRUE) +
-  geom_smooth(method = "lm", se=FALSE, color="red", formula = my.formula, na.rm=TRUE) +
-  stat_poly_eq(formula = my.formula, 
-               aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
-               parse = TRUE, na.rm=TRUE) +  
-  geom_point(na.rm=TRUE)+
-  scale_y_continuous(name = "CD45 cells per mm^2") +
-  scale_x_continuous(name = "PD-L1 H-score") + #, limits = c(20, 36)) +
-    theme_bw(base_size = 16)      
-
-pswab1 <- ggplot(data = data1, aes(x = data1$'Urine.log', y = data1$'Swab.log'), na.rm=TRUE) +
-  #geom_smooth(method = "lm", se=FALSE, color="red", formula = my.formula, na.rm=TRUE) +
-  stat_smooth(method="lm",formula=y~log(x),fill="red") +  
-  geom_point(na.rm=TRUE)+
-  scale_y_continuous(name = "Swab qPCR (Copy Number)") +
-  scale_x_continuous(name = "Urine qPCR (Copy Number)") +
-                  theme_bw(base_size = 16) 
-
-pblood1 <- ggplot(data = data1, aes(x = data1$'Urine.log', y = data1$'Blood.log'), na.rm=TRUE) +
-  #geom_smooth(method = "lm", se=FALSE, color="red", formula = my.formula, na.rm=TRUE) +
-  stat_smooth(method="lm",formula=y~log(x),fill="red") +  
-  geom_point(na.rm=TRUE)+
-  scale_y_continuous(name = "Blood qPCR (Copy Number)") +
-  scale_x_continuous(name = "Urine qPCR (Copy Number)") + #, limits = c(20, 36)) +
-  theme_bw(base_size = 16)  
-
-pother1 <- ggplot(data = data1, aes(x = data1$'Fecal Pellet.log', y = data1$'Swab.log'), na.rm=TRUE) +
-  #geom_smooth(method = "lm", se=FALSE, color="red", formula = my.formula, na.rm=TRUE) +
-  stat_smooth(method="lm",formula=y~log(x),fill="red") +  
-  geom_point(na.rm=TRUE)+
-  scale_y_continuous(name = "Swab qPCR (Copy Number)") +
-  scale_x_continuous(name = "Fecal qPCR (Copy Number)") +
-  theme_bw(base_size = 16)  
-
-ggarrange(pfecal1, pswab1, pblood1, pother1, 
-          labels = c("A", "B", "C", "D"),
-          ncol = 2, nrow = 2)
-
-
-library(ggplot2)
-library(ggpmisc)
-library(ggplot2)
-library(gridExtra)
-library(readxl)
-library(ggpubr)
-library(Rmisc)
 
 ############
 ############

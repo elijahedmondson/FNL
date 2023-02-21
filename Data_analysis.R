@@ -36,7 +36,10 @@ Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study S
 Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
                      sheet = "22-331-2")
 
-data <- Study3
+data <- read_excel("C:/Users/edmondsonef/Desktop/Humanized/MHL Humanized Tissue Counts.xlsx", 
+                   sheet = "122 Tumor")
+
+
 variable = data$`Adjusted Marrow Grade`
 group = data$`Groups`
 

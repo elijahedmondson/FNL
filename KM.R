@@ -13,6 +13,7 @@ library(flexsurv)
 library(dplyr)
 library(survtools)
 library(finalfit)
+library(gtsummary)
 
 Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
                      sheet = "19-331-137")
@@ -42,7 +43,7 @@ setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 
 
 
-data <- Study1
+data <- Study3
 fit <- survfit(Surv(`Days`, Censor)~Group, data=data)
 surv_median(fit)
 allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = T)#, #surv.median.line = c("hv")), 
@@ -55,7 +56,7 @@ allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, ri
                        #                                                    "30 mg/kg NCGC00841450"))
 allplot
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("22-331-2 Survival Curves.tiff", units="in", width=12, height=10, res=200)
+tiff("sss Survival Curves.tiff", units="in", width=12, height=10, res=200)
 allplot
 dev.off()
 
@@ -65,23 +66,22 @@ coxfit <- coxph(Surv(Days, Censor) ~ Group, data = data, ties = 'exact')
 summary(coxfit)
 
 
+##Gt summary
 
-#Final Fit
-explanatory = 'Group'
-dependent = 'Days'
-table_data <- data %>% 
-  finalfit(dependent, explanatory)
-knitr::kable(table_data, align=c("l", "l", "r", "r", "r"))
+table1 <-
+  coxph(Surv(Days, Censor) ~ Group, data) %>%
+  tbl_regression(exponentiate = TRUE)
+table1
 
-data %>% 
-  or_plot(dependent, explanatory)
-
-
-
-
+data_F01 <- dplyr::filter(data, Groups!="F01")
+table2 <-
+  coxph(Surv(Days, Censor) ~ Group, data_F01, ties = 'exact') %>%
+  tbl_regression(exponentiate = TRUE)
+table2
 
 
-F01 <- dplyr::filter(all, Group!="F01")
+
+
 
 
 F01$Tx <- factor(F01$Tx, levels = c("30 mg/kg Gilteritinib",
