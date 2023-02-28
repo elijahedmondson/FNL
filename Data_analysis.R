@@ -1,17 +1,7 @@
-library(survMisc)
-library(survival)
-library(jskm)
-library(survey)
-library(survminer)
-library(survival)
+
 library(ggplot2)
 library(ggfortify)
-library(readxl)
-library(survival)
-library(survminer)
-library(flexsurv)
 library(dplyr)
-library(survtools)
 library(gridExtra)
 library(readxl)
 library(ggpubr)
@@ -22,32 +12,44 @@ library(GGally)
 library(ggplot2)
 library(tidyverse)
 library(gapminder)
-library(dplyr)
 library(ggsignif)
-library(ggplot2)
-library(gridExtra)
-library(readxl)
 library(patchwork)
 
-Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-                     sheet = "19-331-137")
-Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-                     sheet = "19-331-121")
-Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-                     sheet = "22-331-2")
+library(survMisc)
+library(survival)
+library(jskm)
+library(survey)
+library(survminer)
+library(survival)
+library(flexsurv)
+library(survtools)
+# Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+#                      sheet = "19-331-137")
+# Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+#                      sheet = "19-331-121")
+# Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+#                      sheet = "22-331-2")
+# 
+# data <- read_excel("C:/Users/edmondsonef/Desktop/Humanized/MHL Humanized Tissue Counts.xlsx", 
+#                    sheet = "122 Tumor")
 
-data <- read_excel("C:/Users/edmondsonef/Desktop/Humanized/MHL Humanized Tissue Counts.xlsx", 
-                   sheet = "122 Tumor")
 
+variable = data$`% Tumor`
+group = as.character(data$`Groups`)
 
-variable = data$`Adjusted Marrow Grade`
-group = data$`Groups`
+ggplot(data, aes(group, variable))+
+  geom_boxplot()+
+  scale_y_continuous(name = "Percentage of Lung Classified as Tumor") +
+  geom_jitter(aes(x = group, y = variable, color = group), width = 0.2, height = 0.01, size = 4)+
+  theme_bw(base_size = 18) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 18), legend.title=element_blank())
+
 
 
 F01 <- ggplot(data, aes(group, variable))+
   geom_boxplot()+
   scale_y_continuous(name = "Survival Adjusted Leukemic Grade \n(BM Grade / Time on Test)") +
-  geom_jitter(aes(x = group, y = variable, color = data$'Group'), width = 0.2, height = 0.01, size = 4) +
+  geom_jitter(aes(x = group, y = variable, color = data$'Groups'), width = 0.2, height = 0.01, size = 4) +
   geom_signif(
     comparisons = list(c("F01", "F02"),
                        c("F01", "F03"),
