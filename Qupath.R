@@ -19,16 +19,17 @@ variable = data$`H-score`
 
 plot<-data %>%
   ggplot(aes(`Groups`,variable)) +
-  geom_jitter(aes(color = `Groups`, shape = Sex), width = 0.2, height = 0.001, size = 3) +
+  geom_jitter(aes(color = `Groups`, shape = TMA), width = 0.2, height = 0.001, size = 3) +
   scale_y_continuous(name = "H-score") + 
   theme(axis.text.x=element_text(angle=25,hjust=1)) +
+  #theme(axis.text.x=element_blank()) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20)) +
-  facet_wrap(~ Tissue)
+  facet_wrap(~ Tissue, ncol=1)
 plot
 
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot.tiff", units="in", width=12, height=10, res=150)
+tiff("Plot.tiff", units="in", width=10, height=10, res=150)
 plot
 dev.off()
 
