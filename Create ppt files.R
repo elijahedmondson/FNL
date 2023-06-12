@@ -4,9 +4,9 @@ library(magrittr)
 library(flextable)
 library(magick)
 
-study = "MHL 231464"
+study = "MHL 230588"
 investigator = " Stracker"
-path = "F:/QuPath/MHL 231464 Stracker/export/"
+path = "F:/QuPath/MHL 230588 Stracker/export/"
 #path = "C:/Users/edmondsonef/Desktop/export/"
 img.file <- list.files(path, pattern = ".png", all.files = FALSE,
            full.names = TRUE)
