@@ -15,13 +15,14 @@ library(survtools)
 library(finalfit)
 library(gtsummary)
 
-Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-                     sheet = "19-331-137")
-Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-                     sheet = "19-331-121")
-Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-                     sheet = "22-331-2")
-
+# Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+#                      sheet = "19-331-137")
+# Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+#                      sheet = "19-331-121")
+# Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
+#                      sheet = "22-331-2")
+data <- read_excel("C:/Users/edmondsonef/Desktop/MHL 22-331-18 Efficacy.xlsx", 
+                                     sheet = "Full Path Data")
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
@@ -43,20 +44,19 @@ setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 
 
 
-data <- Study3
-fit <- survfit(Surv(`Days`, Censor)~Group, data=data)
+fit <- survfit(Surv(`Day`, Censor1)~Group, data=data)
 surv_median(fit)
-allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = T)#, #surv.median.line = c("hv")), 
-                       # legend="right", legend.title="Group", legend.labs=c("Vehicle",
-                       #                                                    "30 mg/kg Gilteritinib",
-                       #                                                    "1 mg/kg NCGC00841450",
-                       #                                                    "3 mg/kg NCGC00841450",
-                       #                                                    "10 mg/kg NCGC00841450",
-                       #                                                    "10 mg/kg NCGC00841450 MWF",
-                       #                                                    "30 mg/kg NCGC00841450"))
+allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = T, #surv.median.line = c("hv")),
+                       title = "Censor All", 
+                       legend="right", legend.title="Group", legend.labs=c("Vehicle",
+                                                                          "5mg/kg NCGC-1450",
+                                                                          "10mg/kg NCGC-1450",
+                                                                          "35mg/kg Venetoclax",
+                                                                          "5mg/kg 1450 & Venetoclax",
+                                                                          "10mg/kg 1450 & Venetoclax"))
 allplot
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("sss Survival Curves.tiff", units="in", width=12, height=10, res=200)
+tiff("Censor1.tiff", units="in", width=16, height=10, res=200)
 allplot
 dev.off()
 

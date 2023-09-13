@@ -4,13 +4,13 @@ library(magrittr)
 library(flextable)
 library(magick)
 
-study = "MHL 230588"
-investigator = " Stracker"
-path = "F:/QuPath/MHL 230588 Stracker/export/"
-#path = "C:/Users/edmondsonef/Desktop/export/"
-img.file <- list.files(path, pattern = ".png", all.files = FALSE,
+study = "MHL Skimune_set2"
+investigator = " NCL"
+#path = "F:/QuPath/MHL 230588 Stracker/export/"
+path = "C:/Users/edmondsonef/Desktop/Skimune_set2/"
+img.file <- list.files(path, all.files = FALSE,#pattern = ".png", 
            full.names = TRUE)
-img.file.name <- list.files(path, pattern = ".png", all.files = FALSE,
+img.file.name <- list.files(path, all.files = FALSE,#pattern = ".png", 
                             full.names = FALSE)
 
 number <- length(img.file)
@@ -20,7 +20,8 @@ doc <- ph_with(doc, value = study, location = ph_location_type(type = "title"))
 doc <- ph_with(doc, value = format(Sys.Date()), location = ph_location_type(type = "dt"))
 doc <- ph_with(doc, value = "Manifest", location = ph_location_type(type = "sldNum"))
 
-Manifest <- list.files(path = path, pattern = "-a.png", all.files = FALSE, full.names = TRUE)
+Manifest <- list.files(path = path, #pattern = "-a.png", 
+                       all.files = FALSE, full.names = TRUE)
 Manifest <- as.data.frame(Manifest)
 set_flextable_defaults(font.size = 8, theme_fun = theme_booktabs, padding = 1)#, table.layout = "fixed")
 ft <- flextable(Manifest)
