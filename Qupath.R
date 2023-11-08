@@ -15,12 +15,14 @@ library(ggsignif)
 
 
 theme_set(theme_bw(12))
-variable = data$`Adjusted Marrow Score`
+variable = data$`Nuclear H-score`
 
 plot<-data %>%
-  ggplot(aes(`Group`,variable)) +
-  geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 5) +
-  scale_y_continuous(name = "Survival Adjusted Leukemic Grade \n (BM Grade / Time on Test)") + 
+  ggplot(aes(`Class`,variable)) +
+  geom_jitter(aes(color = `HPV`), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  scale_y_continuous(name = "Nuclear H-score") + 
   theme(axis.text.x=element_text(angle=25,hjust=1)) +
   #theme(axis.text.x=element_blank()) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20))# +
@@ -29,11 +31,21 @@ plot
 
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot1.tiff", units="in", width=15, height=10, res=150)
+tiff("Plot1.tiff", units="in", width=6, height=6, res=150)
 plot
 dev.off()
 
 
+data1 <- summarySE(data, measurevar="Tumor: Cell H-score", groupvars=c("Class"), na.rm = TRUE)
+
+
+ggplot(data1, aes(x=data1$'Class', y=data1$'Tumor: Cell H-score')) + 
+  geom_errorbar(aes(ymin=data1$'Tumor: Cell H-score'-se, ymax=data1$'Tumor: Cell H-score'+se))+
+  geom_jitter(aes(color = `Class`), width = 0.2, height = 0.001, size = 5) +
+  scale_y_continuous(name = "Tumor: Cell H-score") + 
+  theme(axis.text.x=element_text(angle=25,hjust=1)) +
+  #theme(axis.text.x=element_blank()) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20))
 
 
 
