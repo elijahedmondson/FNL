@@ -44,16 +44,16 @@ setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 
 
 
-fit <- survfit(Surv(`Day`, Censor1)~Group, data=data)
+fit <- survfit(Surv(`Day`, Censor)~Group, data=data)
 surv_median(fit)
 allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = T, #surv.median.line = c("hv")),
                        title = "Censor All", 
                        legend="right", legend.title="Group", legend.labs=c("Vehicle",
                                                                           "5mg/kg NCGC-1450",
-                                                                          "10mg/kg NCGC-1450",
-                                                                          "35mg/kg Venetoclax",
-                                                                          "5mg/kg 1450 & Venetoclax",
-                                                                          "10mg/kg 1450 & Venetoclax"))
+                                                                          "5mg/kg NCGC-1450 & Venetoclax low",
+                                                                          "5mg/kg NCGC-1450 & Venetoclax high",
+                                                                          "Venetoclax low",
+                                                                          "Venetoclax high"))
 allplot
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 tiff("Censor1.tiff", units="in", width=16, height=10, res=200)
