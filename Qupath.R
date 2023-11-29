@@ -15,14 +15,14 @@ library(ggsignif)
 
 
 theme_set(theme_bw(12))
-variable = data$`Nuclear H-score`
+variable = data$`Sum of Marrow Grade`
 
 plot<-data %>%
-  ggplot(aes(`Class`,variable)) +
-  geom_jitter(aes(color = `HPV`), width = 0.2, height = 0.001, size = 5) +
+  ggplot(aes(`Group`,variable)) +
+  geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 5) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Nuclear H-score") + 
+  scale_y_continuous(name = "Histologic Leukemic Grade") + 
   theme(axis.text.x=element_text(angle=25,hjust=1)) +
   #theme(axis.text.x=element_blank()) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20))# +
@@ -31,7 +31,7 @@ plot
 
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot1.tiff", units="in", width=6, height=6, res=150)
+tiff("Plot1.tiff", units="in", width=14, height=8, res=200)
 plot
 dev.off()
 

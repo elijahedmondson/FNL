@@ -15,6 +15,8 @@ library(survtools)
 library(finalfit)
 library(gtsummary)
 
+data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-331-137 Efficacy/MHL 19-331-137.xlsx", 
+                   sheet = "Animal data")
 # Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
 #                      sheet = "19-331-137")
 # Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
@@ -46,38 +48,65 @@ setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 
 fit <- survfit(Surv(`Day`, Censor)~Group, data=data)
 surv_median(fit)
-allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = T, #surv.median.line = c("hv")),
+allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = F, risk.table = T, #surv.median.line = c("hv")),
+                       title = "", 
+                       legend="right",legend.title="Groups",legend.labs=c("Control",
+                                                                          "Gilteritinib",
+                                                                          "NCGC00841450",
+                                                                          "NCGC00690381",
+                                                                          "NCGC00841754",
+                                                                          "NCGC00843798",
+                                                                          "CA-4948"))
+                       # legend="right", legend.title="Group", legend.labs=c("F01 Vehicle",
+                       #                                                    "F02 5mg/kg NCGC-1450",
+                       #                                                    "F03 5mg/kg NCGC-1450 & Venetoclax low",
+                       #                                                    "F04 5mg/kg NCGC-1450 & Venetoclax high",
+                       #                                                    "F05 Venetoclax low",
+                       #                                                    "F06 Venetoclax high"))
+allplot
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("Censor1.tiff", units="in", width=12, height=8, res=200)
+allplot
+dev.off()
+
+### CoxPH risk estimates
+fit <- survfit(Surv(Day, Censor)~Group, data=data)
+coxfit <- coxph(Surv(Day, Censor) ~ Group, data = data, ties = 'exact')
+summary(coxfit)
+
+forest_plot <- ggforest(coxfit, data = data,
+                        cpositions = c(0.01, 0.07, 0.4), 
+                        fontsize = 1, noDigits = 3,
+                        refLabel = "reference")
+forest_plot
+
+
+
+data_F01 <- dplyr::filter(data, Group %in% c("F02", "F03","F04"))
+fit <- survfit(Surv(`Day`, Censor)~Group, data=data_F01)
+surv_median(fit)
+allplot <- ggsurvplot2(fit, data=data_F01, xlab = "Days (post-dosing)", pval = T, risk.table = T, #surv.median.line = c("hv")),
                        title = "Censor All", 
-                       legend="right", legend.title="Group", legend.labs=c("Vehicle",
-                                                                          "5mg/kg NCGC-1450",
-                                                                          "5mg/kg NCGC-1450 & Venetoclax low",
-                                                                          "5mg/kg NCGC-1450 & Venetoclax high",
-                                                                          "Venetoclax low",
-                                                                          "Venetoclax high"))
+                       legend="right", legend.title="Group", legend.labs=c("F02 5mg/kg NCGC-1450",
+                                                                           "F03 5mg/kg NCGC-1450 & Venetoclax low",
+                                                                           "F04 5mg/kg NCGC-1450 & Venetoclax high"))
 allplot
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 tiff("Censor1.tiff", units="in", width=16, height=10, res=200)
 allplot
 dev.off()
 
-### CoxPH risk estimates
-fit <- survfit(Surv(Days, Censor)~Group, data=data)
-coxfit <- coxph(Surv(Days, Censor) ~ Group, data = data, ties = 'exact')
+fit <- survfit(Surv(Day, Censor)~Groups, data=data_F01)
+coxfit <- coxph(Surv(Day, Censor) ~ Groups, data = data_F01, ties = 'exact')
 summary(coxfit)
 
+forest_plot <- ggforest(coxfit, data = data_F01,
+                        cpositions = c(0.01, 0.07, 0.4), 
+                        fontsize = 1, noDigits = 3,
+                        refLabel = "reference")
+forest_plot
 
-##Gt summary
 
-table1 <-
-  coxph(Surv(Days, Censor) ~ Group, data) %>%
-  tbl_regression(exponentiate = TRUE)
-table1
-
-data_F01 <- dplyr::filter(data, Groups!="F01")
-table2 <-
-  coxph(Surv(Days, Censor) ~ Group, data_F01, ties = 'exact') %>%
-  tbl_regression(exponentiate = TRUE)
-table2
 
 
 
