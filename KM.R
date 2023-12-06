@@ -8,23 +8,18 @@ library(ggplot2)
 library(ggfortify)
 library(readxl)
 library(survival)
-library(survminer)
 library(flexsurv)
 library(dplyr)
 library(survtools)
 library(finalfit)
 library(gtsummary)
 
-data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-331-137 Efficacy/MHL 19-331-137.xlsx", 
-                   sheet = "Animal data")
-# Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-#                      sheet = "19-331-137")
-# Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-#                      sheet = "19-331-121")
-# Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", 
-#                      sheet = "22-331-2")
-data <- read_excel("C:/Users/edmondsonef/Desktop/MHL 22-331-18 Efficacy.xlsx", 
-                                     sheet = "Full Path Data")
+data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-331-137 Efficacy/MHL 19-331-137.xlsx", sheet = "Animal data")
+# Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "19-331-137")
+# Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "19-331-121")
+# Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "22-331-2")
+#data <- read_excel("C:/Users/edmondsonef/Desktop/MHL 22-331-18 Efficacy.xlsx", sheet = "Full Path Data")
+
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
@@ -48,7 +43,7 @@ setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 
 fit <- survfit(Surv(`Day`, Censor)~Group, data=data)
 surv_median(fit)
-allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = F, risk.table = T, #surv.median.line = c("hv")),
+allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = T, #surv.median.line = c("hv")),
                        title = "", 
                        legend="right",legend.title="Groups",legend.labs=c("Control",
                                                                           "Gilteritinib",
@@ -72,36 +67,42 @@ dev.off()
 ### CoxPH risk estimates
 fit <- survfit(Surv(Day, Censor)~Group, data=data)
 coxfit <- coxph(Surv(Day, Censor) ~ Group, data = data, ties = 'exact')
+fit <- survfit(Surv(Day)~Group, data=data)
+coxfit <- coxph(Surv(Day) ~ Group, data = data, ties = 'exact')
 summary(coxfit)
 
 forest_plot <- ggforest(coxfit, data = data,
-                        cpositions = c(0.01, 0.07, 0.4), 
+                        cpositions = c(0.01, 0.07, 0.3), 
                         fontsize = 1, noDigits = 3,
                         refLabel = "reference")
 forest_plot
 
 
 
-data_F01 <- dplyr::filter(data, Group %in% c("F02", "F03","F04"))
+data_F01 <- dplyr::filter(data, Group %in% c("F02 Gilteritinib", "F03 NCGC00841450","F04 NCGC00690381",
+                                             "F05 NCGC00841754", "F06 NCGC00843798","F07 CA-4948"))
 fit <- survfit(Surv(`Day`, Censor)~Group, data=data_F01)
 surv_median(fit)
 allplot <- ggsurvplot2(fit, data=data_F01, xlab = "Days (post-dosing)", pval = T, risk.table = T, #surv.median.line = c("hv")),
-                       title = "Censor All", 
-                       legend="right", legend.title="Group", legend.labs=c("F02 5mg/kg NCGC-1450",
-                                                                           "F03 5mg/kg NCGC-1450 & Venetoclax low",
-                                                                           "F04 5mg/kg NCGC-1450 & Venetoclax high"))
+                       title = "", 
+                       legend="right", legend.title="Group", legend.labs=c("Gilteritinib",
+                                                                           "NCGC00841450",
+                                                                           "NCGC00690381",
+                                                                           "NCGC00841754",
+                                                                           "NCGC00843798",
+                                                                           "CA-4948"))
 allplot
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 tiff("Censor1.tiff", units="in", width=16, height=10, res=200)
 allplot
 dev.off()
 
-fit <- survfit(Surv(Day, Censor)~Groups, data=data_F01)
-coxfit <- coxph(Surv(Day, Censor) ~ Groups, data = data_F01, ties = 'exact')
+fit <- survfit(Surv(Day)~Group, data=data_F01)
+coxfit <- coxph(Surv(Day) ~ Group, data = data_F01, ties = 'exact')
 summary(coxfit)
 
 forest_plot <- ggforest(coxfit, data = data_F01,
-                        cpositions = c(0.01, 0.07, 0.4), 
+                        cpositions = c(0.01, 0.07, 0.3), 
                         fontsize = 1, noDigits = 3,
                         refLabel = "reference")
 forest_plot
