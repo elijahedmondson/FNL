@@ -10,6 +10,17 @@ library(tidyverse)
 library(gapminder)
 library(dplyr)
 library(ggsignif)
+
+New <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(avg = mean(`Area (microns squared)`), 
+                                                                  sum = sum(`Area (microns squared)`))
+
+New2 <- data %>% group_by(`Image Tag`) %>% count(`Layer Name`)
+
+export <- left_join(New, New2)
+
+write.csv(export, "C:/Users/edmondsonef/Desktop/export.csv")
+                                                                                    
+
 # new <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(sum = sum(`Area (microns squared)`))
 # write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
 
