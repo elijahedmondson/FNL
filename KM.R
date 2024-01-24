@@ -30,9 +30,31 @@ data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-33
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
 
+
+fit <- survfit(Surv(`Age`, Censor)~Groups, data=data)
+plot <- ggsurvplot2(fit, data=data, pval = T, risk.table = F,
+                    title = "", 
+                    legend="right",
+                    legend.title="Groups",legend.labs=c("01 Vehicle BRAF",
+                                                                       "02 Dabrafenib BRAF",
+                                                                       "03 Vehicle BRAF-SdhB",
+                                                                       "04 Dabrafenib BRAF-SdhB"))
+
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("Censor1.tiff", units="in", width=8, height=5, res=200)
+plot
+dev.off()
 
+coxfit <- coxph(Surv(`Age`, Censor) ~ Groups, data = data, ties = 'exact')
+fit <- survfit(Surv(Age)~Group, data=data)
+coxfit <- coxph(Surv(Age) ~ Groups, data = data, ties = 'exact')
+summary(coxfit)
 
+forest_plot <- ggforest(coxfit, data = data,
+                        cpositions = c(0.01, 0.07, 0.3), 
+                        fontsize = 1, noDigits = 3,
+                        refLabel = "reference")
+forest_plot
 
 ####
 #### AML Studies
@@ -43,7 +65,7 @@ setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 
 fit <- survfit(Surv(`Day`, Censor)~Group, data=data)
 surv_median(fit)
-allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = T, #surv.median.line = c("hv")),
+allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = F, #surv.median.line = c("hv")),
                        title = "", 
                        legend="right",legend.title="Groups",legend.labs=c("Control",
                                                                           "Gilteritinib",

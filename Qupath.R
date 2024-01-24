@@ -11,38 +11,37 @@ library(gapminder)
 library(dplyr)
 library(ggsignif)
 
+
+
 New <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(avg = mean(`Area (microns squared)`), 
-                                                                  sum = sum(`Area (microns squared)`))
+                                                                   sum = sum(`Area (microns squared)`))
 
-New2 <- data %>% group_by(`Image Tag`) %>% count(`Layer Name`)
+# New2 <- data %>% group_by(`Image Tag`) %>% count(`Layer Name`)
+# export <- left_join(New, New2)
+# write.csv(export, "C:/Users/edmondsonef/Desktop/export.csv")
 
-export <- left_join(New, New2)
-
-write.csv(export, "C:/Users/edmondsonef/Desktop/export.csv")
-                                                                                    
-
-# new <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(sum = sum(`Area (microns squared)`))
-# write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
+new <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(sum = sum(`Area (microns squared)`))
+write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
 
 
 theme_set(theme_bw(12))
-variable = data$`Sum of Marrow Grade`
+variable = data$`Tunica Muscularis % Tumor`
 
 plot<-data %>%
-  ggplot(aes(`Group`,variable)) +
-  geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 5) +
+  ggplot(aes(`Groups`,variable)) +
+  geom_jitter(aes(color = `Groups`, shape= `Sex`), width = 0.2, height = 0.001, size = 5) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Histologic Leukemic Grade") + 
+  scale_y_continuous(name = "% Proliferative Cells, Gastric Tunica Muscularis \n (AI Pixel Classifier)") + 
   theme(axis.text.x=element_text(angle=25,hjust=1)) +
-  #theme(axis.text.x=element_blank()) +
+  theme(axis.text.x=element_blank()) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20))# +
   #facet_wrap(~ Tissue, ncol=1)
 plot
 
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot1.tiff", units="in", width=14, height=8, res=200)
+tiff("Plot1.tiff", units="in", width=10, height=6, res=200)
 plot
 dev.off()
 
