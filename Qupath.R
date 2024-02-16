@@ -25,23 +25,23 @@ write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
 
 
 theme_set(theme_bw(12))
-variable = data$`Tunica Muscularis % Tumor`
+variable = data$`pERK`
 
 plot<-data %>%
   ggplot(aes(`Groups`,variable)) +
-  geom_jitter(aes(color = `Groups`, shape= `Sex`), width = 0.2, height = 0.001, size = 5) +
+  geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 5) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "% Proliferative Cells, Gastric Tunica Muscularis \n (AI Pixel Classifier)") + 
-  theme(axis.text.x=element_text(angle=25,hjust=1)) +
-  theme(axis.text.x=element_blank()) +
+  scale_y_continuous(name = "pERK: % Positive Pixel") + 
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  #theme(axis.text.x=element_blank()) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20))# +
   #facet_wrap(~ Tissue, ncol=1)
 plot
 
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot1.tiff", units="in", width=10, height=6, res=200)
+tiff("Plot1.tiff", units="in", width=6, height=4, res=200)
 plot
 dev.off()
 

@@ -29,9 +29,12 @@ data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-33
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
+fit <- survfit(Surv(`Age`, Censor), data=data)
+ggsurvplot2(fit, data=data, pval = T, risk.table = F,conf.int = FALSE)
 
+fit <- survfit(Surv(`Age`, Censor)~Group, data=data)
+ggsurvplot2(fit, data=data, pval = T, risk.table = F)
 
-fit <- survfit(Surv(`Age`, Censor)~Groups, data=data)
 plot <- ggsurvplot2(fit, data=data, pval = T, risk.table = F,
                     title = "", 
                     legend="right",
