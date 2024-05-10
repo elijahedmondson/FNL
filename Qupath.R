@@ -1,3 +1,4 @@
+library(ggExtra)
 library(gridExtra)
 library(readxl)
 library(ggpubr)
@@ -12,38 +13,170 @@ library(dplyr)
 library(ggsignif)
 
 
-
-New <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(avg = mean(`Area (microns squared)`), 
-                                                                   sum = sum(`Area (microns squared)`))
-
 # New2 <- data %>% group_by(`Image Tag`) %>% count(`Layer Name`)
 # export <- left_join(New, New2)
 # write.csv(export, "C:/Users/edmondsonef/Desktop/export.csv")
+# new <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(sum = sum(`Area (microns squared)`))
+# write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
 
-new <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(sum = sum(`Area (microns squared)`))
-write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
 
+data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/Saloura/MHL Saloura SUV420H1 TMA.xlsx", 
+                   sheet = "plot4")
 
 theme_set(theme_bw(12))
-variable = data$`pERK`
+variable = data$`Survival Adjusted Metastasis`
+
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
 
 plot<-data %>%
-  ggplot(aes(`Groups`,variable)) +
+  #mutate(Group = fct_relevel(Group,"Normal", "Dysplasia", "HPV- Cancer", "HPV+ Cancer")) %>%
+  ggplot(aes(`Group`,variable)) +
   geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 5) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "pERK: % Positive Pixel") + 
+  scale_y_continuous(name = "B16F10 Metastasis (Survival Adjusted)") +   
+  #geom_signif(comparisons = list(c("HPV- Cancer", "HPV+ Cancer")), test = "t.test", map_signif_level=TRUE) +
   theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
   #theme(axis.text.x=element_blank()) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 20))# +
+  theme(axis.title.x=element_blank(), text = element_text(size = 24))# +
   #facet_wrap(~ Tissue, ncol=1)
 plot
 
-
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot1.tiff", units="in", width=6, height=4, res=200)
+tiff("Plot1.tiff", units="in", width=20, height=8, res=200)
 plot
 dev.off()
+
+
+
+plot<-data %>%
+  mutate(Group = fct_relevel(Group,"Normal", "Dysplasia", "HPV- Cancer")) %>%
+  ggplot(aes(`Group`,variable)) +
+  geom_jitter(aes(x=`Group`,y=variable, fill=factor(Location), color = `Group`), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  scale_y_continuous(name = "SUV420H1 H-Score") +   
+  #geom_signif(comparisons = list(c("HPV- Cancer", "Normal","Dysplasia")), test = "t.test", map_signif_level=TRUE) +
+  #geom_signif(comparisons = list(c("HPV- Cancer", "Normal","Dysplasia")), test = "wilcox.test", map_signif_level=F) +
+  geom_signif(comparisons = list(c("Normal","Dysplasia"),
+                                 c("Normal","HPV- Cancer")),
+              #test = "t.test",
+              step_increase = 0.1,
+              map_signif_level=F,
+              show.legend = TRUE) +
+  theme(axis.text.x=element_text(angle=25,hjust=1)) +
+  #theme(axis.text.x=element_blank()) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20)) +
+  theme(legend.position="none") +
+facet_wrap(~ Location)
+plot
+
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("Plot1.tiff", units="in", width=12, height=8, res=200)
+plot
+dev.off()  
+
+
+
+
+
+data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/Saloura/MHL Saloura SUV420H1 TMA.xlsx", 
+                   sheet = "plot5")
+
+theme_set(theme_bw(12))
+variable = data$`H-score`
+
+
+plot<-data %>%
+  #mutate(Group = fct_relevel(Group,"Normal", "Dysplasia", "HPV- Cancer")) %>%
+  ggplot(aes(`Location`,variable)) +
+  geom_jitter(aes(x=`Location`,y=variable, fill=factor(Location), color = `Location`), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  scale_y_continuous(name = "SUV420H1 H-Score") +   
+  geom_signif(comparisons = list(c("HPV- Cytoplasm","HPV- Nuclear")),
+              #test = "t.test",
+              #step_increase = 0.1,
+              map_signif_level=T,
+              show.legend = TRUE) +
+  theme(axis.text.x=element_text(angle=25,hjust=1)) +
+  #theme(axis.text.x=element_blank()) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20)) +
+  theme(legend.position="none") #+
+  #facet_wrap(~ Location)
+plot
+
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("Plot1.tiff", units="in", width=8, height=6, res=200)
+plot
+dev.off()  
+
+
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+
+
+
+### HISTOGRAM ###
+### HISTOGRAM ###
+### HISTOGRAM ###
+### HISTOGRAM ###
+### HISTOGRAM ###
+plot<-data %>%  mutate(Groups = fct_relevel(Group,"Normal", "Dysplasia", "HPV- Cancer", "HPV+ Cancer")) %>%
+  mutate(text = fct_reorder(Group, variable)) %>%
+  ggplot(aes(x=variable, color=Group, fill=Group)) +
+  geom_histogram(alpha=0.6, binwidth = 5) +
+  facet_wrap(~Groups)
+
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("Plot1.tiff", units="in", width=10, height=8, res=200)
+plot
+dev.off()
+
+
+plot<-data %>%
+  mutate(Group = fct_relevel(Group,"Normal", "Dysplasia", "HPV- Cancer", "HPV+ Cancer")) %>%
+  ggplot(aes(`Nuclear H-score`, `Cytoplasm H-score`, color = Group)) + 
+  geom_point() + theme_classic()
+ggExtra::ggMarginal(plot, groupColour = TRUE, groupFill = TRUE, type = "boxplot")
+
+
+plot <- ggplot(data, aes(`Nuclear H-score`, `Cytoplasm H-score`, color = Group)) + 
+  geom_point() + theme_classic()
+ggExtra::ggMarginal(plot, groupColour = TRUE, groupFill = TRUE, type = "boxplot")
+#("density", "histogram", "boxplot", "violin", "densigram")
+
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("Plot1.tiff", units="in", width=8, height=6, res=200)
+ggExtra::ggMarginal(plot, groupColour = TRUE, groupFill = TRUE, type = "boxplot")
+dev.off()
+
+### HISTOGRAM ###
+### HISTOGRAM ###
+### HISTOGRAM ###
+### HISTOGRAM ###
+### HISTOGRAM ###
+
+piris <- ggplot(data, aes(`Nuclear H-score`, `Cytoplasm H-score`, color = Group)) +
+  geom_point()
+ggMarginal(piris, groupColour = TRUE, groupFill = TRUE)
+
+
+
+
+
+
+
+
+
+
 
 
 data1 <- summarySE(data, measurevar="Tumor: Cell H-score", groupvars=c("Class"), na.rm = TRUE)
@@ -238,131 +371,8 @@ ggarrange(Brain, Tumor,
 ###########
 
 
-my_mean4 = aggregate(data$'Murine PD-L1: H-score', by=list(data$Group), mean) ; colnames(my_mean4)=c("Group" , "mean")
-my_CI4 = aggregate(data$'Murine PD-L1: H-score', by=list(data$Group) , FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI4)=c("Group" , "CI")
-my_info4 = merge(my_mean4, my_CI4, by.x=1 , by.y=1)
-my_info4$CIdiff = ((my_CI4$CI[,2] - my_CI4$CI[,1])/2)
-
-muPDL1 <- ggplot(data) + 
-  geom_point(data = my_info4, aes(x = Group, y = my_info4$mean), color = "Grey", size = 5) +
-  scale_y_continuous(name = "Murine PD-L1: H-score") +
-  geom_errorbar(data = my_info4, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.2 , size=1) +
-  theme_bw(base_size = 18) +
-  geom_jitter(aes(x = data$Group, y = data$'Murine PD-L1: H-score'), width = 0.2, size = 4) +
-  theme(axis.text.x=element_text(angle=25,hjust=1)) +
-  theme(axis.title.x=element_blank(), legend.position = c(.95,.95), legend.title = element_blank(), legend.justification=c("right", "top"), legend.box.margin = margin(6,6,6,6))
-
-#
-
-my_mean5 = aggregate(data$'Human PD-L1: H-score', by=list(data$Group), mean) ; colnames(my_mean5)=c("Group" , "mean")
-my_CI5 = aggregate(data$'Human PD-L1: H-score', by=list(data$Group) , FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI5)=c("Group" , "CI")
-my_info5 = merge(my_mean5, my_CI5, by.x=1 , by.y=1)
-my_info5$CIdiff = ((my_CI5$CI[,2] - my_CI5$CI[,1])/2)
-
-huPDL1 <- ggplot(data) + 
-  geom_point(data = my_info5, aes(x = Group, y = my_info5$mean), color = "Grey", size = 5) +
-  scale_y_continuous(name = "Human PD-L1: H-score") +
-  geom_errorbar(data = my_info5, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.2 , size=1) +
-  theme_bw(base_size = 18) +
-  geom_jitter(aes(x = data$Group, y = data$'Human PD-L1: H-score'), width = 0.2, size = 4) +
-  theme(axis.text.x=element_text(angle=25,hjust=1)) +
-  theme(axis.title.x=element_blank(), legend.position = c(.95,.95), legend.title = element_blank(), legend.justification=c("right", "top"), legend.box.margin = margin(6,6,6,6))
-
-#
-
-ggarrange(CD45, CD11b, huPDL1, muPDL1, MVD, 
-          labels = c("A", "B", "C", "D", "E"),
-          ncol = 2, nrow = 3)
-
-########
-###########
-
-my_mean = aggregate(data$'Sum on Marrow Grade', by=list(data$'Group'), mean) ; colnames(my_mean)=c("Group" , "mean")
-my_CI = aggregate(data$'Sum on Marrow Grade', by=list(data$'Group') , FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")
-my_info = merge(my_mean, my_CI, by.x=1 , by.y=1)
-my_info$CIdiff = ((my_CI$CI[,2] - my_CI$CI[,1])/2)
-
-ggplot(data) + 
-  geom_point(data = my_info, aes(x = my_info$'Group', y = my_info$mean), color = "Grey", size = 5) +
-  scale_y_continuous(name = "Bone Marrow Score: huCD45+ Cells") +
-  geom_errorbar(data = my_info, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.2 , size=1) +
-  theme_bw(base_size = 18) +
-  geom_jitter(aes(x = data$'Group', y = data$'Sum on Marrow Grade', color = data$Group), width = 0.2, size = 4) +
-  theme(axis.text.x=element_text(angle=45,hjust=1)) +
-  theme(axis.title.x=element_blank(), legend.position = c(.95,.15), legend.title = element_blank(), legend.justification=c("right"), legend.box.margin = margin(6,6,6,6))
-
-###########
-###########
-###########
-
-
-###########
-###########
-###########
-###########
-###ONLY1###
- 
-
-
-###########
-###########
-
-
-
-### Generate Multiplots
-ggarrange(first, Second,
-          labels = c("A", "B"),
-          ncol = 1, nrow = 2)
-
-
-
-data1 <- summarySE(data, measurevar="Xenograft, Abdominal involvement", groupvars=c("Group"), na.rm = TRUE)
-tgc2 <- tgc
-tgc2$dose <- factor(tgc2$dose)
-
-ggplot(data1, aes(x=data1$'Group', y=data1$'Xenograft, Abdominal involvement')) + 
-  geom_errorbar(aes(ymin=data1$'Xenograft, Abdominal involvement'-se, ymax=data1$'Xenograft, Abdominal involvement'+se))
-
-
-ggplot(data) 
-  geom_point(data, aes(x=data$'Group', y=data$'Total Tumor Area / Total Tissue Area (%)'), color = "grey", size = 3) +
-  scale_y_continuous(name = "Xeno") +
-  geom_errorbar(aes(ymin=data1$'Xenograft, Abdominal involvement'-se, ymax=data1$'Xenograft, Abdominal involvement'+se), color = "grey", width = 0.2 , size=1) +
-  theme_bw() +
-  geom_jitter(aes(x = Group, y = data$ALB), width = 0.1)+
-  theme(axis.title.x=element_blank())
-  
-
-
-ggplot(data, aes(x="Age Group", y="Tubular Changes (average)", color="Organ", shape="Sex")) +
-  geom_point() + 
-  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
-  scale_shape_manual(values=c(3, 16, 17))+ 
-  scale_color_manual(values=c('#999999','#E69F00', '#56B4E9'))+
-  theme(legend.position="top")
-
-ggplot(data, aes(x=data$"Group", y=data$"Organ Weight")) 
-
-
-########
-########
-########
-my_mean = aggregate(data$'Disease', by=list(data$Group), mean) ; colnames(my_mean)=c("Group" , "mean")
-my_CI = aggregate(data$'Disease' , by=list(data$Group) , FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")
-my_info = merge(my_mean, my_CI, by.x=1 , by.y=1)
-my_info$CIdiff = ((my_CI$CI[,2] - my_CI$CI[,1])/2)
-
-
-
-ggplot(data) + 
-  geom_point(data = my_info, aes(x = Group , y = my_info$mean), color = "grey", size = 5) +
-  scale_y_continuous(name = "Disease") +
-  geom_errorbar(data = my_info, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.2 , size=1) +
-  theme_bw(base_size = 18) +
-  geom_jitter(aes(x = data$Group, y = data$'Disease'), width = 0.2, size = 4) +
-  theme(axis.title.x=element_blank(), legend.position = c(.95,.95), legend.title = element_blank(), legend.justification=c("right", "top"), legend.box.margin = margin(6,6,6,6))
-
-
+############SD
+############SD
 ############SD
 
 my_mean=aggregate(data$'TUNEL: Positive % Cell' , by=list(data$Group) , mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
@@ -387,24 +397,10 @@ ggarrange(First, Second,
 
 
 
-########
-my_mean = aggregate(data$'Aspirate Grade', by=list(data$Group), mean, na.rm=TRUE) ; colnames(my_mean)=c("Group" , "mean")
-my_CI = aggregate(data$'Aspirate Grade' , by=list(data$Group) , FUN = function(x) t.test(x)$conf.int) ; colnames(my_CI)=c("Group" , "CI")
-my_info = merge(my_mean , my_CI , by.x=1 , by.y=1)
-my_info$CIdiff = ((my_CI$CI[,2] - my_CI$CI[,1])/2)
-
-ggplot(data) + 
-  geom_point(data = my_info, aes(x = Group, y = mean), color = "grey", size = 3) +
-  scale_y_continuous(name = "-") +
-  geom_errorbar(data = my_info, aes(x = Group, y = CIdiff, ymin = mean - CIdiff, ymax = mean + CIdiff), color = "grey", width = 0.2 , size=1) +
-  theme_bw(base_size = 18) +
-  geom_jitter(aes(x = Group, y = data$'Aspirate Grade'), width = 0.2, size = 3) +
-  theme(axis.title.x=element_blank()) +
-  theme(axis.text.x=element_text(angle=45,hjust=1)) 
-
-
-
-###Scatterplots, tumor size over time, etc###
+###Scatterplot, tumor size over time, etc###
+###Scatterplot, tumor size over time, etc###
+###Scatterplot, tumor size over time, etc###
+###Scatterplot, tumor size over time, etc###
 
 
 ggplot(data, aes(x = data$'SUM1', y = data$'SUM2')) +
@@ -429,56 +425,6 @@ lines(lowess(data$'Vessel Count Per mm²',data$'SMA H-Score'), col="blue") # lowe
 qplot(data$Days, data$'Lung Tumors', data = data, colour = data$Groups, geom = "histogram")
 
 
-
-plot(data$Adenoma, data$Days, main="Urine vs Fecal Pellet", 
-     xlab="Urine PCR ", ylab="Fecal PCR ", pch=19)
-
-abline(lm(data$`Dry Fecal Pellet`~data$Urine), col="red") # regression line (y~x) 
-lines(lowess(data$Urine,data$`Dry Fecal Pellet`), col="blue") # lowess line (x,y)
-
-###3D scatterplot
-library(scatterplot3d)
-colors <- c("#999999", "#E69F00", "#56B4E9")
-x <- data$Urine
-y <- data$`Dry Fecal Pellet`
-z <- data$swab
-grps <- as.factor(data$Species)
-scatterplot3d(data$Urine, data$`Dry Fecal Pellet`, data$swab, pch = 16, color = colors[grps],
-              grid = TRUE, box = FALSE, xlab = "Urine PCR", 
-              ylab = "Fecal Pellet PCR", zlab = "Cage Swab PCR")
-
-
-#############Histogram
-#############Histogram
-#############Histogram
-#############Histogram
-#############Histogram
-#############Histogram
-data$log_days = log(data$Age)
-
-par(mfrow=c(2,2))
-hist(data$Age, breaks=40)
-hist(data$log_days, breaks=40)
-hist(data$rankZ, breaks=40)
-
-hist(data$`PreT LL Transform`, breaks=100)
-hist(data$`CNS Polyglucosan Body Transform`, breaks=100)
-
-
-
-res.cox <- coxph(Surv(data$days, data$event), data = data)
-
-#############Histogram
-#############Histogram
-#############Histogram
-#############Histogram
-#############Histogram
-#############Histogram
-#############Histogram
-#############Histogram
-
-
-
 ############
 ############
 
@@ -499,23 +445,16 @@ modelSummary <- summary(linearMod)  # capture model summary as an object
 summary(linearMod)
 
 
-############
-############
-############
-############
-############ Plot with connected datapoints from different columns
-############
-############
-############
-############
-############
 
+############
+############ Plot paired samples 
+############
 library(hrbrthemes)
 library(GGally)
 library(viridis)
 
 # Plot
-ggparcoord(data, columns = 6:9, groupColumn = 2, scale="uniminmax", showPoints = TRUE, alphaLines = .8) +
+ggparcoord(data, columns = 7:8, groupColumn = 3, scale="uniminmax", showPoints = TRUE, alphaLines = .8) +
   scale_color_viridis(discrete=TRUE) +
   theme_ipsum()+
   theme(
@@ -572,77 +511,3 @@ data1 <- merge(feces, kidney, # dataset names
       sort = TRUE, # Should the result be sorted on the by columns
       suffixes = c(".x",".y")
 )
-
-
-
-
-
-
-###########################
-###########################
-###########################
-###########################
-
-
-path = "Q:/archive/PHL/Edmondson/Liver Moonshot/"
-
-
-list.files(path = "Q:/archive/PHL/Edmondson/Liver Moonshot/", pattern = NULL, all.files = FALSE,
-           full.names = FALSE, recursive = FALSE,
-           ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-
-list = dir(path = "Q:/archive/PHL/Edmondson/Liver Moonshot/", pattern = NULL, all.files = FALSE,
-    full.names = T, recursive = FALSE,
-    ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-
-write.csv(list, file = "Q:/archive/PHL/Edmondson/Liver Moonshot/list.csv")
-
-
-
-library(plyr)
-library(dplyr)
-library(readr)
-
-
-path = "C:/Users/edmondsonef/Desktop/QuPath/Sterneck/MHL 200335/area/"
-#path = "P:/archive/PHL/Edmondson/QuPath//"
-
-setwd(path)
-outFile <-"Result1.csv"
-#### Replace .txt with whatever identifier will pick up all of the files you want to analyze. Detections or Annotations are common choices
-Annotationfiles <- dir(path,pattern = ".txt")
-Measurements <- data.frame()
-for(i in 1:length(Annotationfiles)){
-  data.raw <- read_delim(Annotationfiles[i],"\t", escape_double = FALSE, trim_ws = TRUE)
-  Sample = tools::file_path_sans_ext(Annotationfiles[i])
-  data.raw[1,2]<-Sample
-  Measurements<-bind_rows(Measurements, data.raw)
-}
-write.csv(Measurements, outFile, row.names=T)
-
-ggplot(data, aes(x = `family`, y = `Cataract`))+
-  geom_col(aes(fill = `Cataract`), width = 0.7)
-
-
-
-
-ggplot(data, aes(fill=`cat_score`, x=`family`, y="")) +
-  geom_bar(position="stack", stat="identity")
-
-  geom_histogram(fill="white", binwidth = 1)+
-  theme_classic() +
-  geom_text(aes(label=..count..),stat="count",position=position_stack())
-
-ggplot(data, aes(x=`family`, color=data$`cat_score`)) +
-  geom_histogram(fill="white", binwidth = 1)+
-  theme_classic() +
-  geom_text(aes(label=..count..),stat="count",position=position_stack())
-
-ggplot(data, aes(x="", y=groups, fill=family)) +
-  geom_bar(stat="identity", width=1, color="white") +
-  coord_polar("y", start=0) +
-  theme_void() 
-
-
-
-

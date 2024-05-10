@@ -14,7 +14,7 @@ library(survtools)
 library(finalfit)
 library(gtsummary)
 
-data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-331-137 Efficacy/MHL 19-331-137.xlsx", sheet = "Animal data")
+#data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-331-137 Efficacy/MHL 19-331-137.xlsx", sheet = "Animal data")
 # Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "19-331-137")
 # Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "19-331-121")
 # Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "22-331-2")
@@ -29,19 +29,18 @@ data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-33
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
-fit <- survfit(Surv(`Age`, Censor), data=data)
-ggsurvplot2(fit, data=data, pval = T, risk.table = F,conf.int = FALSE)
 
-fit <- survfit(Surv(`Age`, Censor)~Group, data=data)
+
+fit <- survfit(Surv(`Days`, Censor)~Strain, data=data)
 ggsurvplot2(fit, data=data, pval = T, risk.table = F)
 
 plot <- ggsurvplot2(fit, data=data, pval = T, risk.table = F,
                     title = "", 
                     legend="right",
-                    legend.title="Groups",legend.labs=c("01 Vehicle BRAF",
-                                                                       "02 Dabrafenib BRAF",
-                                                                       "03 Vehicle BRAF-SdhB",
-                                                                       "04 Dabrafenib BRAF-SdhB"))
+                    legend.title="Groups",legend.labs=c("01 Vehicle",
+                                                        "02 3mg/kg Gilteritinib",
+                                                        "03 10mg/kg Gilteritinib",
+                                                        "04 30mg/kg Gilteritinib"))
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 tiff("Censor1.tiff", units="in", width=8, height=5, res=200)
@@ -59,35 +58,35 @@ forest_plot <- ggforest(coxfit, data = data,
                         refLabel = "reference")
 forest_plot
 
-####
-#### AML Studies
-####
 
 
 
 
-fit <- survfit(Surv(`Day`, Censor)~Group, data=data)
+data <- read_excel("C:/Users/edmondsonef/Desktop/B16F10 Clone SC-2 Samples.xls", sheet = "Surv")
+data1 <- dplyr::filter(data, Group %in% c("F03", "F06", "F09", "F12", "F15")) 
+
+
+fit <- survfit(Surv(`Day`, Censor)~Group, data=data1)
 surv_median(fit)
-allplot <- ggsurvplot2(fit, data=data, xlab = "Days (post-dosing)", pval = T, risk.table = F, #surv.median.line = c("hv")),
+allplot <- ggsurvplot2(fit, data=data, xlab = "Days", pval = T, risk.table = F,
                        title = "", 
-                       legend="right",legend.title="Groups",legend.labs=c("Control",
-                                                                          "Gilteritinib",
-                                                                          "NCGC00841450",
-                                                                          "NCGC00690381",
-                                                                          "NCGC00841754",
-                                                                          "NCGC00843798",
-                                                                          "CA-4948"))
-                       # legend="right", legend.title="Group", legend.labs=c("F01 Vehicle",
-                       #                                                    "F02 5mg/kg NCGC-1450",
-                       #                                                    "F03 5mg/kg NCGC-1450 & Venetoclax low",
-                       #                                                    "F04 5mg/kg NCGC-1450 & Venetoclax high",
-                       #                                                    "F05 Venetoclax low",
-                       #                                                    "F06 Venetoclax high"))
+                       legend="right",
+                       legend.title="5x10e5",legend.labs=c("B16f10-Vec-1",
+                                                           "B16f10-Nox5 N18",
+                                                           "B16f10-Nox5 N21",
+                                                           "B16f10-Nox5 Mut-15",
+                                                           "B16f10-Nox5 Mut-24"))
+
 allplot
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Censor1.tiff", units="in", width=12, height=8, res=200)
+tiff("Censor1.tiff", units="in", width=7, height=4, res=200)
 allplot
 dev.off()
+
+
+
+
+
 
 ### CoxPH risk estimates
 fit <- survfit(Surv(Day, Censor)~Group, data=data)
