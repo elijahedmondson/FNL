@@ -19,12 +19,8 @@ library(ggsignif)
 # new <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(sum = sum(`Area (microns squared)`))
 # write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
 
-
-data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/Saloura/MHL Saloura SUV420H1 TMA.xlsx", 
-                   sheet = "plot4")
-
 theme_set(theme_bw(12))
-variable = data$`Survival Adjusted Metastasis`
+variable = data$`Heart: % Collagen Positive Tissue`
 
 ### Bar Plot ###
 ### Bar Plot ###
@@ -33,12 +29,11 @@ variable = data$`Survival Adjusted Metastasis`
 ### Bar Plot ###
 
 plot<-data %>%
-  #mutate(Group = fct_relevel(Group,"Normal", "Dysplasia", "HPV- Cancer", "HPV+ Cancer")) %>%
   ggplot(aes(`Group`,variable)) +
-  geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 5) +
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "B16F10 Metastasis (Survival Adjusted)") +   
+  scale_y_continuous(name = "Heart: % Collagen Positive Tissue") +   
   #geom_signif(comparisons = list(c("HPV- Cancer", "HPV+ Cancer")), test = "t.test", map_signif_level=TRUE) +
   theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
   #theme(axis.text.x=element_blank()) +
@@ -47,9 +42,16 @@ plot<-data %>%
 plot
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot1.tiff", units="in", width=20, height=8, res=200)
+tiff("Plot1.tiff", units="in", width=10, height=6, res=200)
 plot
 dev.off()
+
+
+
+
+fig <- cowplot::plot_grid(plotLPA, plotRPA, ncol=2, labels=LETTERS[1:2])
+fig
+
 
 
 
@@ -114,6 +116,7 @@ setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 tiff("Plot1.tiff", units="in", width=8, height=6, res=200)
 plot
 dev.off()  
+
 
 
 ### Bar Plot ###
