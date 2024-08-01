@@ -20,7 +20,7 @@ library(ggsignif)
 # write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
 
 theme_set(theme_bw(12))
-variable = data$`Heart: % Collagen Positive Tissue`
+variable = data$`Liver % Collagen Positive Tissue`
 
 ### Bar Plot ###
 ### Bar Plot ###
@@ -29,20 +29,20 @@ variable = data$`Heart: % Collagen Positive Tissue`
 ### Bar Plot ###
 
 plot<-data %>%
-  ggplot(aes(`Group`,variable)) +
+  ggplot(aes(`Groups`,variable)) +
   geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Heart: % Collagen Positive Tissue") +   
+  scale_y_continuous(name = "Liver: % Collagen") +   
   #geom_signif(comparisons = list(c("HPV- Cancer", "HPV+ Cancer")), test = "t.test", map_signif_level=TRUE) +
   theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
   #theme(axis.text.x=element_blank()) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 24))# +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20))# +
   #facet_wrap(~ Tissue, ncol=1)
 plot
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot1.tiff", units="in", width=10, height=6, res=200)
+tiff("Plot.tiff", units="in", width=8, height=5, res=200)
 plot
 dev.off()
 
