@@ -22,7 +22,7 @@ library(ggsignif)
 data <- dplyr::filter(data, Cohort!="1")
 
 theme_set(theme_bw(12))
-variable = data$`% Necrosis`
+variable = data$`Survival Adjusted Leukemia Grade`
 
 ### Bar Plot ###
 ### Bar Plot ###
@@ -35,7 +35,7 @@ plot<-data %>%
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "% Necrosis") +   
+  scale_y_continuous(name = "Survival Adjusted Leukemia Grade") +   
   #geom_signif(comparisons = list(c("HPV- Cancer", "HPV+ Cancer")), test = "t.test", map_signif_level=TRUE) +
   theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
   #theme(axis.text.x=element_blank()) +
@@ -44,7 +44,7 @@ plot<-data %>%
 plot
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot.tiff", units="in", width=8, height=6, res=200)
+tiff("Plot.tiff", units="in", width=12, height=6, res=200)
 plot
 dev.off()
 

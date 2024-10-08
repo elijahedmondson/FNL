@@ -20,10 +20,10 @@ library(gtsummary)
 # Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "22-331-2")
 #data <- read_excel("C:/Users/edmondsonef/Desktop/MHL 22-331-18 Efficacy.xlsx", sheet = "Full Path Data")
 
-data <- read_excel("C:/Users/edmondsonef/Desktop/MHL BxPC-3 Doroshow.xlsx", 
-                   sheet = "Sheet1")
+data <- read_excel("C:/Users/edmondsonef/Desktop/MHL 22-331-65 efficacy.xlsx", 
+                   sheet = "Path")
 
-data <- filter(all, Groups %in% c("F01", "F02", "F04")) 
+data <- filter(data, Groups %in% c("F01", "F02", "F04")) 
 F01 <- dplyr::filter(all, Group!="F01")
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
@@ -44,12 +44,14 @@ ggsurvplot2(fit, data=data, pval = T, risk.table = F)
 plot <- ggsurvplot2(fit, data=data, pval = T, risk.table = F,
                     title = "", 
                     legend="right",
-                    legend.title="Groups",legend.labs=c(#"F01 - B5 1x10^6 cells",
-                                                        "F02 - B5 2.5x10^6 cells",
-                                                        #"F03 - C3 1x10^6 cells",
-                                                        "F04 - C3 2.5x10^6 cells",
-                                                        #"F05 - E5 1x10^6 cells"))
-                                                        "F06 - E5 2.5x10^6 cells"))
+                    legend.title="Groups",legend.labs=c("F01 Vehicle",
+                                                        "F02 Revumenib",
+                                                        "F03 Tamibarotene",
+                                                        "F04 Iadademstat",
+                                                        "F05 Revumenib & Tamibarotene",
+                                                        "F06 Iadademstat & Tamibarotene",
+                                                        "F07 Revumenib & Iadademstat",
+                                                        "F08 Revumenib, Tamibarotene, & Iadaemstat"))
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 tiff("KM.tiff", units="in", width=6, height=4, res=200)
