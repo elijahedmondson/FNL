@@ -11,7 +11,15 @@ library(tidyverse)
 library(gapminder)
 library(dplyr)
 library(ggsignif)
+corr <- cor(data$'OSA % Osteoid', data$'ROI % Osteoid', method = c("pearson"), use = "pairwise.complete.obs")
 
+ggplot(data, aes(x = data$'OSA % Osteoid', y = data$'ROI % Osteoid')) +
+  geom_point(aes(color = data$Group), size = 5)+
+  scale_y_continuous(name = "ROI % Osteoid") +
+  scale_x_continuous(name = "OSA % Osteoid") +
+  theme_bw(base_size = 18)+
+  stat_smooth(method = "lm", col = "#C42126",se = T, size = 1) +
+  stat_cor(p.accuracy = 0.001, r.accuracy = 0.01)
 
 # New2 <- data %>% group_by(`Image Tag`) %>% count(`Layer Name`)
 # export <- left_join(New, New2)
@@ -21,8 +29,9 @@ library(ggsignif)
 
 data <- dplyr::filter(data, Cohort!="1")
 
+
 theme_set(theme_bw(12))
-variable = data$`Survival Adjusted Leukemia Grade`
+variable = data$`Avg Lipid Median Diameter (??m)`
 
 ### Bar Plot ###
 ### Bar Plot ###
@@ -30,24 +39,58 @@ variable = data$`Survival Adjusted Leukemia Grade`
 ### Bar Plot ###
 ### Bar Plot ###
 
-plot<-data %>%
-  ggplot(aes(`Group`,variable)) +
-  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
-  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
-  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Survival Adjusted Leukemia Grade") +   
-  #geom_signif(comparisons = list(c("HPV- Cancer", "HPV+ Cancer")), test = "t.test", map_signif_level=TRUE) +
-  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
-  #theme(axis.text.x=element_blank()) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 20)) #+
-  #facet_wrap(~ Sex, ncol=2)
-plot
+
+
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot.tiff", units="in", width=12, height=6, res=200)
+tiff("BodyWeight41024.tiff", units="in", width=12, height=6, res=200)
 plot
 dev.off()
 
+LipidA<-data %>%
+  ggplot(aes(`Group`,`Steatosis Score`)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
+  #stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  scale_y_continuous(name = "Steatosis Histology Score") +   
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20))
+
+LipidB<-data %>%
+  ggplot(aes(`Group`,`Vacuolated Hepatocytes (% area)`)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  scale_y_continuous(name = "Vacuolated Hepatocytes (% area)") +   
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
+
+
+LipidC<-data %>%
+  ggplot(aes(`Group`,`Lipid Percent Area`)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  scale_y_continuous(name = "Total Lipid % Area") +   
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
+LipidD<-data %>%
+  ggplot(aes(`Group`,`Avg Lipid Area (??m²)`)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  scale_y_continuous(name = "Avg Lipid Object Size (??m²)") +   
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
+
+
+
+tiff("Absolute Organ Weights.tiff", units="in", width=15, height=10, res=200)
+(LipidC | LipidD) /
+  (LipidB | LipidA) /
+  plot_layout(guides = "collect") +
+  plot_annotation(title = "")
+dev.off()
 
 
 
@@ -407,24 +450,27 @@ ggarrange(First, Second,
 ###Scatterplot, tumor size over time, etc###
 ###Scatterplot, tumor size over time, etc###
 
+corr <- cor(data$'OSA % Osteoid', data$'ROI % Osteoid', method = c("pearson"), use = "pairwise.complete.obs")
 
-ggplot(data, aes(x = data$'SUM1', y = data$'SUM2')) +
+ggplot(data, aes(x = data$'OSA % Osteoid', y = data$'ROI % Osteoid')) +
   geom_point(aes(color = data$Group), size = 5)+
-  scale_y_continuous(name = "SUM2") +
-  scale_x_continuous(name = "SUM1") +
+  scale_y_continuous(name = "ROI % Osteoid") +
+  scale_x_continuous(name = "OSA % Osteoid") +
   theme_bw(base_size = 18)+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = F,
-              size = 1)
+  stat_smooth(method = "lm", col = "#C42126",se = T, size = 1) +
+  stat_cor(p.accuracy = 0.001, r.accuracy = 0.01)
 
-plot(data$'Vessel Count Per mm²', data$'SMA H-Score')
-abline(lm(data$'SMA H-Score'~data$'Vessel Count Per mm²'), col="red") # regression line (y~x) 
+  geom_text(x = 152, y = 250, label = paste0('r = ', corr),color = 'red')
 
-plot(data$'Vessel Count Per mm²', data$'SMA H-Score', main="Scatterplot", 
-     xlab="Age (days) ", ylab="Pulmonary Metastatic Density", pch=19)
-abline(lm(data$'Vessel Count Per mm²'~data$'SMA H-Score'), col="red") # regression line (y~x) 
-lines(lowess(data$'Vessel Count Per mm²',data$'SMA H-Score'), col="blue") # lowess line (x,y)
+
+
+plot(data$'OSA Osteoid Area (mm²)', data$'ROI Osteoid Area (mm²)')
+abline(lm(data$'OSA Osteoid Area (mm²)'~data$'ROI Osteoid Area (mm²)'), col="red") # regression line (y~x) 
+
+plot(data$'OSA Osteoid Area (mm²)', data$'ROI Osteoid Area (mm²)', main="Scatterplot", 
+     xlab="Age (days) ", ylab="", pch=19)
+abline(lm(data$'OSA Osteoid Area (mm²)'~data$'ROI Osteoid Area (mm²)'), col="red") # regression line (y~x) 
+lines(lowess(data$'OSA Osteoid Area (mm²)',data$'ROI Osteoid Area (mm²)'), col="blue") # lowess line (x,y)
 
 
 qplot(data$Days, data$'Lung Tumors', data = data, colour = data$Groups, geom = "histogram")
@@ -434,7 +480,7 @@ qplot(data$Days, data$'Lung Tumors', data = data, colour = data$Groups, geom = "
 ############
 
 my.formula <- y ~ x  
-ggplot(data = data, aes(y = data$'3/17/21 BM Grade', x = data$'3/4/21 BM Grade', color = data$Group), na.rm=TRUE) +
+ggplot(data = data, aes(y = data$'ROI Osteoid Area (mm²)', x = data$'OSA Osteoid Area (mm²)', color = data$Group), na.rm=TRUE) +
   geom_smooth(method = "lm", se=FALSE, formula = my.formula) +
   stat_poly_eq(formula = y ~ x, show.legend = T, parse = TRUE, na.rm=T) +  
   geom_point(na.rm=TRUE)+
@@ -444,7 +490,7 @@ ggplot(data = data, aes(y = data$'3/17/21 BM Grade', x = data$'3/4/21 BM Grade',
 
 
 
-linearMod <- lm(data$'CD206 Num Positive per mm^2' ~ data$'CD86 Num Positive per mm^2', data=data)  # build linear regression model on full data
+linearMod <- lm(data$'OSA Osteoid Area (mm²)' ~ data$'ROI Osteoid Area (mm²)', data=data)  # build linear regression model on full data
 print(linearMod)
 modelSummary <- summary(linearMod)  # capture model summary as an object
 summary(linearMod)

@@ -35,26 +35,26 @@ F01 <- dplyr::filter(all, Group!="F01")
 ####### OPTION 1 ####### 
 ####### OPTION 1 ####### 
 
-coxfit <- coxph(Surv(`Day`) ~ Group, data = data, ties = 'exact')
+coxfit <- coxph(Surv(`Day`, Censor) ~ Group, data = data, ties = 'exact')
 summary(coxfit)
 
-fit <- survfit(Surv(`Day`)~Group, data=data)
-ggsurvplot2(fit, data=data, pval = T, risk.table = F)
+fit <- survfit(Surv(`Day`, Censor)~Group, data=data)
+ggsurvplot2(fit, data=data, pval = T, risk.table = T)
 
 plot <- ggsurvplot2(fit, data=data, pval = T, risk.table = F,
                     title = "", 
-                    legend="right",
-                    legend.title="Groups",legend.labs=c("F01 Vehicle",
-                                                        "F02 Revumenib",
-                                                        "F03 Tamibarotene",
-                                                        "F04 Iadademstat",
-                                                        "F05 Revumenib & Tamibarotene",
-                                                        "F06 Iadademstat & Tamibarotene",
-                                                        "F07 Revumenib & Iadademstat",
-                                                        "F08 Revumenib, Tamibarotene, & Iadaemstat"))
+                    legend="right")#,
+                    # legend.title="Groups",legend.labs=c("F01 Vehicle",
+                    #                                     "F02 Revumenib",
+                    #                                     "F03 Tamibarotene",
+                    #                                     "F04 Iadademstat",
+                    #                                     "F05 Revumenib & Tamibarotene",
+                    #                                     "F06 Iadademstat & Tamibarotene",
+                    #                                     "F07 Revumenib & Iadademstat",
+                    #                                     "F08 Revumenib, Tamibarotene, & Iadaemstat"))
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("KM.tiff", units="in", width=6, height=4, res=200)
+tiff("KM.tiff", units="in", width=8, height=4, res=200)
 plot
 dev.off()
 
@@ -62,12 +62,12 @@ dev.off()
 
 forest_plot <- ggforest(coxfit, data = data,
                         cpositions = c(0.01, 0.07, 0.3), 
-                        fontsize = 1, noDigits = 3,
+                        fontsize = 0.9, noDigits = 2,
                         refLabel = "reference")
 forest_plot
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("forest_plot.tiff", units="in", width=10, height=4, res=200)
+tiff("forest_plot.tiff", units="in", width=11, height=4, res=200)
 forest_plot
 dev.off()
 
@@ -77,14 +77,14 @@ dev.off()
 
 
 ### CoxPH risk estimates
-fit <- survfit(Surv(Days, Censor)~Group, data=data)
-coxfit <- coxph(Surv(Days, Censor) ~ Group, data = data, ties = 'exact')
-fit <- survfit(Surv(Days)~Group, data=data)
-coxfit <- coxph(Surv(Days) ~ Group, data = data, ties = 'exact')
+fit <- survfit(Surv(Day, Censor)~Group, data=data)
+coxfit <- coxph(Surv(Day, Censor) ~ Group, data = data, ties = 'exact')
+fit <- survfit(Surv(Day)~Group, data=data)
+coxfit <- coxph(Surv(Day) ~ Group, data = data, ties = 'exact')
 summary(coxfit)
 
 forest_plot <- ggforest(coxfit, data = data,
-                        #cpositions = c(0.01, 0.07, 0.3), 
+                        cpositions = c(0.01, 0.07, 0.3), 
                         fontsize = 1, noDigits = 3,
                         refLabel = "reference")
 forest_plot
