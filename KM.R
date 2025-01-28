@@ -14,51 +14,43 @@ library(survtools)
 library(finalfit)
 library(gtsummary)
 
-#data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/ThomasC/19-331-137 Efficacy/MHL 19-331-137.xlsx", sheet = "Animal data")
-# Study1 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "19-331-137")
-# Study2 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "19-331-121")
-# Study3 <- read_excel("C:/Users/edmondsonef/Desktop/NCGC00841450 Efficacy Study Summary.xlsx", sheet = "22-331-2")
-#data <- read_excel("C:/Users/edmondsonef/Desktop/MHL 22-331-18 Efficacy.xlsx", sheet = "Full Path Data")
+data <- read_excel("C:/Users/edmondsonef/Desktop/MHL Doroshow Ls513 Parental SC.xlsx", 
+                   sheet = "Ls513 EP Pool SC-1")
 
-data <- read_excel("C:/Users/edmondsonef/Desktop/MHL 22-331-65 efficacy.xlsx", 
-                   sheet = "Path")
+# data <- filter(data, Groups %in% c("F01", "F02", "F04")) 
+NSG <- dplyr::filter(data, Strain!="ANU")
+ANU <- dplyr::filter(data, Strain!="NSG")
 
-data <- filter(data, Groups %in% c("F01", "F02", "F04")) 
-F01 <- dplyr::filter(all, Group!="F01")
-####### OPTION 1 ####### 
-####### OPTION 1 ####### 
-####### OPTION 1 ####### 
-####### OPTION 1 ####### 
-####### OPTION 1 ####### 
-####### OPTION 1 ####### 
-####### OPTION 1 ####### 
-####### OPTION 1 ####### 
-####### OPTION 1 ####### 
 
-coxfit <- coxph(Surv(`Day`, Censor) ~ Group, data = data, ties = 'exact')
-summary(coxfit)
+####### KM ####### 
+####### KM ####### 
+####### KM ####### 
 
-fit <- survfit(Surv(`Day`, Censor)~Group, data=data)
-ggsurvplot2(fit, data=data, pval = T, risk.table = T)
+fit <- survfit(Surv(`Day`, Censor)~Group, data=NSG)
+ggsurvplot2(fit, data=NSG, pval = F, risk.table = F, title = "", legend="right", xlim = c(0, 65), break.x.by = 10, xlab = "Day")
+plot <- ggsurvplot2(fit, data=NSG, pval = F, risk.table = F, title = "", legend="right", xlim = c(0, 65), break.x.by = 10, xlab = "Day")
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("NSG-KM.tiff", units="in", width=6, height=3, res=200)
+plot
+dev.off()
 
-plot <- ggsurvplot2(fit, data=data, pval = T, risk.table = F,
-                    title = "", 
-                    legend="right")#,
-                    # legend.title="Groups",legend.labs=c("F01 Vehicle",
-                    #                                     "F02 Revumenib",
-                    #                                     "F03 Tamibarotene",
-                    #                                     "F04 Iadademstat",
-                    #                                     "F05 Revumenib & Tamibarotene",
-                    #                                     "F06 Iadademstat & Tamibarotene",
-                    #                                     "F07 Revumenib & Iadademstat",
-                    #                                     "F08 Revumenib, Tamibarotene, & Iadaemstat"))
+fit <- survfit(Surv(`Day`, Censor)~Group, data=ANU)
+ggsurvplot2(fit, data=ANU, pval = F, risk.table = F, title = "", legend="right", xlim = c(0, 65), break.x.by = 10, xlab = "Day")
+plot <- ggsurvplot2(fit, data=ANU, pval = F, risk.table = F, title = "", legend="right", xlim = c(0, 65), break.x.by = 10, xlab = "Day")#,
+# legend.title="Groups",legend.labs=c("F01 Vehicle", "F08 Revumenib, Tamibarotene, & Iadaemstat"))
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("KM.tiff", units="in", width=8, height=4, res=200)
+tiff("ANU-KM.tiff", units="in", width=6, height=3, res=200)
 plot
 dev.off()
 
 
+####### Forest Plot ####### 
+####### Forest Plot ####### 
+####### Forest Plot ####### 
+
+coxfit <- coxph(Surv(`Day`, Censor) ~ Group, data = data, ties = 'exact')
+summary(coxfit)
 
 forest_plot <- ggforest(coxfit, data = data,
                         cpositions = c(0.01, 0.07, 0.3), 
@@ -71,23 +63,10 @@ tiff("forest_plot.tiff", units="in", width=11, height=4, res=200)
 forest_plot
 dev.off()
 
-###########
 
 
 
 
-### CoxPH risk estimates
-fit <- survfit(Surv(Day, Censor)~Group, data=data)
-coxfit <- coxph(Surv(Day, Censor) ~ Group, data = data, ties = 'exact')
-fit <- survfit(Surv(Day)~Group, data=data)
-coxfit <- coxph(Surv(Day) ~ Group, data = data, ties = 'exact')
-summary(coxfit)
-
-forest_plot <- ggforest(coxfit, data = data,
-                        cpositions = c(0.01, 0.07, 0.3), 
-                        fontsize = 1, noDigits = 3,
-                        refLabel = "reference")
-forest_plot
 
 
 
@@ -129,45 +108,3 @@ tiff("19-331-137 Survival Curves.tiff", units="in", width=15, height=9, res=200)
 allplot
 dev.off()
 
-
-
-####### OPTION 2 ####### 
-####### OPTION 2 ####### 
-####### OPTION 2 ####### 
-####### OPTION 2 ####### 
-####### OPTION 2 ####### 
-####### OPTION 2 #######
-####### OPTION 2 ####### 
-####### OPTION 2 ####### 
-####### OPTION 2 #######
-
-
-model_fit <- survfit(Surv(Age, Status) ~ Groups, data = data)
-
-autoplot(model_fit) + 
-  labs(x = "\n Survival Time (Days) ", y = "Survival Probabilities \n", 
-       title = "Survival Times \n JBM 336 \n") + 
-  theme_bw()
-
-autoplot(survfit(Surv(Age, Status)~ data$'CNS Polyglucosan Body', data = data), conf.int = FALSE, censor = T)
-autoplot(survfit(Surv(Age, Status) ~ Groups, data = data))
-autoplot(survfit(Surv(Age, Status) ~ Groups, data = data), conf.int = FALSE, censor = T)
-
-
-####### BOX COX Transform ####### 
-####### BOX COX Transform ####### 
-####### BOX COX Transform ####### 
-####### BOX COX Transform ####### 
-####### BOX COX Transform ####### 
-####### BOX COX Transform ####### 
-
-library(MASS)
-
-#fit linear regression model
-model <- lm(data$Age~data$Status)
-plot(model)
-
-bc <- boxcox(data$Age~data$Status)
-(lambda <- bc$x[which.max(bc$y)])
-
-new_model <- lm(((data$Age^lambda-1)/lambda) ~ data$Status)
