@@ -11,7 +11,10 @@ library(tidyverse)
 library(gapminder)
 library(dplyr)
 library(ggsignif)
-corr <- cor(data$'OSA % Osteoid', data$'ROI % Osteoid', method = c("pearson"), use = "pairwise.complete.obs")
+
+new <- full_join(new, tumor, by = "slideID")
+
+cor(data$'OSA % Osteoid', data$'ROI % Osteoid', method = c("pearson"), use = "pairwise.complete.obs")
 
 ggplot(data, aes(x = data$'OSA % Osteoid', y = data$'ROI % Osteoid')) +
   geom_point(aes(color = data$Group), size = 5)+
