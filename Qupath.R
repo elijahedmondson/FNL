@@ -11,46 +11,41 @@ library(tidyverse)
 library(gapminder)
 library(dplyr)
 library(ggsignif)
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+#data <- dplyr::filter(data, Cohort!="1")
 
-new <- full_join(new, tumor, by = "slideID")
-
-cor(data$'OSA % Osteoid', data$'ROI % Osteoid', method = c("pearson"), use = "pairwise.complete.obs")
-
-ggplot(data, aes(x = data$'OSA % Osteoid', y = data$'ROI % Osteoid')) +
-  geom_point(aes(color = data$Group), size = 5)+
-  scale_y_continuous(name = "ROI % Osteoid") +
-  scale_x_continuous(name = "OSA % Osteoid") +
-  theme_bw(base_size = 18)+
-  stat_smooth(method = "lm", col = "#C42126",se = T, size = 1) +
-  stat_cor(p.accuracy = 0.001, r.accuracy = 0.01)
-
-# New2 <- data %>% group_by(`Image Tag`) %>% count(`Layer Name`)
-# export <- left_join(New, New2)
-# write.csv(export, "C:/Users/edmondsonef/Desktop/export.csv")
-# new <- data %>% group_by(`Image Tag`, `Layer Name`) %>% summarise(sum = sum(`Area (microns squared)`))
-# write.csv(new, "C:/Users/edmondsonef/Desktop/new.csv")
-
-data <- dplyr::filter(data, Cohort!="1")
-
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
 
 theme_set(theme_bw(12))
-variable = data$`Avg Lipid Median Diameter (??m)`
+variable = data$`ALP`
 
-### Bar Plot ###
-### Bar Plot ###
-### Bar Plot ###
-### Bar Plot ###
-### Bar Plot ###
-
-
-
+plot<-data %>%
+  ggplot(aes(`Time`,variable)) +
+  geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 4) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 5)+
+  scale_y_continuous(name = "ALP") +   
+  #theme(axis.text.x=element_text(angle=25,hjust=1)) +
+  #theme(axis.text.x=element_blank()) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 12)) +
+  theme(legend.position="none") +
+  facet_wrap(~ data$Dose, nrow = 1)
+plot
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("BodyWeight41024.tiff", units="in", width=12, height=6, res=200)
+tiff("Plot.tiff", units="in", width=10, height=3, res=200)
 plot
-dev.off()
+dev.off()  
 
-LipidA<-data %>%
+
+
+
+
+image_A<-data %>%
   ggplot(aes(`Group`,`Steatosis Score`)) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
@@ -59,7 +54,7 @@ LipidA<-data %>%
   theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20))
 
-LipidB<-data %>%
+image_B<-data %>%
   ggplot(aes(`Group`,`Vacuolated Hepatocytes (% area)`)) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
@@ -69,7 +64,7 @@ LipidB<-data %>%
   theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
 
 
-LipidC<-data %>%
+image_C<-data %>%
   ggplot(aes(`Group`,`Lipid Percent Area`)) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
@@ -77,20 +72,20 @@ LipidC<-data %>%
   scale_y_continuous(name = "Total Lipid % Area") +   
   theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
-LipidD<-data %>%
-  ggplot(aes(`Group`,`Avg Lipid Area (??m²)`)) +
+image_D<-data %>%
+  ggplot(aes(`Group`,`Avg Lipid Area (??m?)`)) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Avg Lipid Object Size (??m²)") +   
+  scale_y_continuous(name = "Avg Lipid Object Size (??m?)") +   
   theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
   theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
 
 
 
 tiff("Absolute Organ Weights.tiff", units="in", width=15, height=10, res=200)
-(LipidC | LipidD) /
-  (LipidB | LipidA) /
+(image_C | image_D) /
+  (image_B | image_A) /
   plot_layout(guides = "collect") +
   plot_annotation(title = "")
 dev.off()
@@ -467,13 +462,13 @@ ggplot(data, aes(x = data$'OSA % Osteoid', y = data$'ROI % Osteoid')) +
 
 
 
-plot(data$'OSA Osteoid Area (mm²)', data$'ROI Osteoid Area (mm²)')
-abline(lm(data$'OSA Osteoid Area (mm²)'~data$'ROI Osteoid Area (mm²)'), col="red") # regression line (y~x) 
+plot(data$'OSA Osteoid Area (mm?)', data$'ROI Osteoid Area (mm?)')
+abline(lm(data$'OSA Osteoid Area (mm?)'~data$'ROI Osteoid Area (mm?)'), col="red") # regression line (y~x) 
 
-plot(data$'OSA Osteoid Area (mm²)', data$'ROI Osteoid Area (mm²)', main="Scatterplot", 
+plot(data$'OSA Osteoid Area (mm?)', data$'ROI Osteoid Area (mm?)', main="Scatterplot", 
      xlab="Age (days) ", ylab="", pch=19)
-abline(lm(data$'OSA Osteoid Area (mm²)'~data$'ROI Osteoid Area (mm²)'), col="red") # regression line (y~x) 
-lines(lowess(data$'OSA Osteoid Area (mm²)',data$'ROI Osteoid Area (mm²)'), col="blue") # lowess line (x,y)
+abline(lm(data$'OSA Osteoid Area (mm?)'~data$'ROI Osteoid Area (mm?)'), col="red") # regression line (y~x) 
+lines(lowess(data$'OSA Osteoid Area (mm?)',data$'ROI Osteoid Area (mm?)'), col="blue") # lowess line (x,y)
 
 
 qplot(data$Days, data$'Lung Tumors', data = data, colour = data$Groups, geom = "histogram")
@@ -483,7 +478,7 @@ qplot(data$Days, data$'Lung Tumors', data = data, colour = data$Groups, geom = "
 ############
 
 my.formula <- y ~ x  
-ggplot(data = data, aes(y = data$'ROI Osteoid Area (mm²)', x = data$'OSA Osteoid Area (mm²)', color = data$Group), na.rm=TRUE) +
+ggplot(data = data, aes(y = data$'ROI Osteoid Area (mm?)', x = data$'OSA Osteoid Area (mm?)', color = data$Group), na.rm=TRUE) +
   geom_smooth(method = "lm", se=FALSE, formula = my.formula) +
   stat_poly_eq(formula = y ~ x, show.legend = T, parse = TRUE, na.rm=T) +  
   geom_point(na.rm=TRUE)+
@@ -493,7 +488,7 @@ ggplot(data = data, aes(y = data$'ROI Osteoid Area (mm²)', x = data$'OSA Osteoid
 
 
 
-linearMod <- lm(data$'OSA Osteoid Area (mm²)' ~ data$'ROI Osteoid Area (mm²)', data=data)  # build linear regression model on full data
+linearMod <- lm(data$'OSA Osteoid Area (mm?)' ~ data$'ROI Osteoid Area (mm?)', data=data)  # build linear regression model on full data
 print(linearMod)
 modelSummary <- summary(linearMod)  # capture model summary as an object
 summary(linearMod)
