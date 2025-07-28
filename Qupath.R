@@ -21,14 +21,14 @@ setwd("C:/Users/edmondsonef/Desktop/R-plots/")
 ### Bar Plot ###
 
 theme_set(theme_bw(12))
-variable = data$`ALP`
+variable = data$`% DAB Positive Tissue`
 
 plot<-data %>%
   ggplot(aes(`Time`,variable)) +
   geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 4) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 5)+
-  scale_y_continuous(name = "ALP") +   
+  scale_y_continuous(name = "Liver: % TUNEL Positive") +   
   #theme(axis.text.x=element_text(angle=25,hjust=1)) +
   #theme(axis.text.x=element_blank()) +
   theme(axis.title.x=element_blank(), text = element_text(size = 12)) +
@@ -448,12 +448,12 @@ ggarrange(First, Second,
 ###Scatterplot, tumor size over time, etc###
 ###Scatterplot, tumor size over time, etc###
 
-corr <- cor(data$'OSA % Osteoid', data$'ROI % Osteoid', method = c("pearson"), use = "pairwise.complete.obs")
+corr <- cor(data$'Ki67 labelling index (positive cells/mm^2)', data$'MC', method = c("pearson"), use = "pairwise.complete.obs")
 
-ggplot(data, aes(x = data$'OSA % Osteoid', y = data$'ROI % Osteoid')) +
+ggplot(data, aes(x = data$'Ki67 labelling index (positive cells/mm^2)', y = data$'MC')) +
   geom_point(aes(color = data$Group), size = 5)+
-  scale_y_continuous(name = "ROI % Osteoid") +
-  scale_x_continuous(name = "OSA % Osteoid") +
+  scale_y_continuous(name = "Mitotic Count") +
+  scale_x_continuous(name = "Ki67 IHC Result") +
   theme_bw(base_size = 18)+
   stat_smooth(method = "lm", col = "#C42126",se = T, size = 1) +
   stat_cor(p.accuracy = 0.001, r.accuracy = 0.01)
