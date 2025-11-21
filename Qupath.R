@@ -12,88 +12,135 @@ library(gapminder)
 library(dplyr)
 library(ggsignif)
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-#data <- dplyr::filter(data, Cohort!="1")
 
-### Bar Plot ###
-### Bar Plot ###
-### Bar Plot ###
-### Bar Plot ###
-### Bar Plot ###
+data <- read_excel("C:/Users/edmondsonef/Desktop/MHL 25-331-11 APAP.xlsx", sheet = "Image Analysis")
+data <- dplyr::filter(data, `Time Point`!="48 hour")
+#data <- dplyr::filter(data, `Censor`!=1)
 
 theme_set(theme_bw(12))
-variable = data$`% DAB Positive Tissue`
+
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+### Bar Plot ###
+
+image_A<-data %>%
+  ggplot(aes(`Group`,`TUNEL 4 % Necrosis`)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  # geom_signif(comparisons = list(c("M06","M08")),
+  #             #test = "t.test",
+  #             #step_increase = 0.1,
+  #             map_signif_level=T,
+  #             show.legend = TRUE) +
+  scale_y_continuous(name = "TUNEL: % Liver Necrosis") +   
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20))+
+  facet_wrap(~ data$`Time`, nrow = 2)
+
+setwd("C:/Users/edmondsonef/Desktop/R-plots/")
+tiff("Plot.tiff", units="in", width=10, height=8, res=200)
+image_A
+dev.off()  
+
+image_B<-data %>%
+  ggplot(aes(`Group`,`TUNEL 3 % Necrosis`)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  geom_signif(comparisons = list(c("M01","MO2","M03","MO4")),
+              #test = "t.test",
+              #step_increase = 0.1,
+              map_signif_level=T,
+              show.legend = TRUE) +
+  scale_y_continuous(name = "") +   
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20)) +
+  facet_wrap(~ data$`Time`, nrow = 2)
+
+
+image_C<-data %>%
+  ggplot(aes(`Group`,`AST`)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  geom_signif(comparisons = list(c("M01","MO2","M03","MO4")),
+              #test = "t.test",
+              #step_increase = 0.1,
+              map_signif_level=T,
+              show.legend = TRUE) +
+  scale_y_continuous(name = "AST") +   
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20)) +
+  facet_wrap(~ data$`Time`, nrow = 2)
+
+image_D<-data %>%
+  ggplot(aes(`Group`,`AST`)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
+  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
+  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
+  scale_y_continuous(name = "AST") +
+  geom_signif(comparisons = list(c("M01","MO2","M03","MO4")),
+              #test = "t.test",
+              #step_increase = 0.1,
+              map_signif_level=T,
+              show.legend = TRUE) +
+  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
+  theme(axis.title.x=element_blank(), text = element_text(size = 20))+
+  facet_wrap(~ data$`Time`, nrow = 2)
+
+
+library(patchwork)
+tiff("figure.tiff", units="in", width=20, height=7, res=200)
+(image_D | image_A | image_B) +
+  plot_layout(guides = "collect") +
+  plot_annotation(title = "48 hours")
+dev.off()
+
+
+ 
+# tiff("figure.tiff", units="in", width=15, height=10, res=200)
+# (image_D | image_C) /
+#   (image_B | image_A) /
+#   plot_layout(guides = "collect") +
+#   plot_annotation(title = "")
+# dev.off()
+# 
+# fig <- cowplot::plot_grid(plotLPA, plotRPA, ncol=2, labels=LETTERS[1:2])
+# fig
+
+
+
+
+
+
+
+
+theme_set(theme_bw(12))
+variable = data$`ALT`
 
 plot<-data %>%
-  ggplot(aes(`Time`,variable)) +
-  geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 4) +
+  ggplot(aes(`Group`,variable)) +
+  geom_jitter(aes(color = `Groups`), width = 0.2, height = 0.001, size = 3.5) +
   stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
   stat_summary(fun.y=mean, geom="point", color = "grey", size = 5)+
-  scale_y_continuous(name = "Liver: % TUNEL Positive") +   
+  scale_y_continuous(name = "ALT") +   
   #theme(axis.text.x=element_text(angle=25,hjust=1)) +
   #theme(axis.text.x=element_blank()) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 12)) +
-  theme(legend.position="none") +
-  facet_wrap(~ data$Dose, nrow = 1)
+  theme(axis.title.x=element_blank(), text = element_text(size = 16)) +
+  #theme(legend.position="none") +
+  facet_wrap(~ data$`Time`, nrow = 2)
 plot
 
 setwd("C:/Users/edmondsonef/Desktop/R-plots/")
-tiff("Plot.tiff", units="in", width=10, height=3, res=200)
+tiff("Plot.tiff", units="in", width=7, height=6, res=200)
 plot
 dev.off()  
 
 
 
-
-
-image_A<-data %>%
-  ggplot(aes(`Group`,`Steatosis Score`)) +
-  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
-  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
-  #stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Steatosis Histology Score") +   
-  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 20))
-
-image_B<-data %>%
-  ggplot(aes(`Group`,`Vacuolated Hepatocytes (% area)`)) +
-  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
-  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
-  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Vacuolated Hepatocytes (% area)") +   
-  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
-
-
-image_C<-data %>%
-  ggplot(aes(`Group`,`Lipid Percent Area`)) +
-  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
-  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
-  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Total Lipid % Area") +   
-  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
-image_D<-data %>%
-  ggplot(aes(`Group`,`Avg Lipid Area (??m?)`)) +
-  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="errorbar", color = "grey", width=0.5,size = 1.5)+
-  geom_jitter(aes(color = Groups), width = 0.2, height = 0.001, size = 5) +
-  stat_summary(fun.y=mean, geom="point", color = "grey", size = 7)+
-  scale_y_continuous(name = "Avg Lipid Object Size (??m?)") +   
-  theme(axis.text.x=element_text(angle=0,hjust=0.5)) +
-  theme(axis.title.x=element_blank(), text = element_text(size = 20)) 
-
-
-
-tiff("Absolute Organ Weights.tiff", units="in", width=15, height=10, res=200)
-(image_C | image_D) /
-  (image_B | image_A) /
-  plot_layout(guides = "collect") +
-  plot_annotation(title = "")
-dev.off()
-
-
-
-fig <- cowplot::plot_grid(plotLPA, plotRPA, ncol=2, labels=LETTERS[1:2])
-fig
 
 
 
@@ -133,7 +180,7 @@ data <- read_excel("C:/Users/edmondsonef/Desktop/Pathology Reports/Saloura/MHL S
                    sheet = "plot5")
 
 theme_set(theme_bw(12))
-variable = data$`H-score`
+variable = data$`H-Score`
 
 
 plot<-data %>%
